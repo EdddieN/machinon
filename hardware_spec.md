@@ -39,7 +39,7 @@
 * Current sampled at 1 Hz and reported as average over each reporting interval
 * Frequency of CT4 input sampled at 1 Hz and reported as average over each reporting interval
 ## Digital Outputs
-* 8 open-drain (low side) digital outputs, switching to common ground.
+* 16 open-drain (low side) digital outputs, switching to common ground.
 * Max 24 V in OFF state (with inductive load clamp at 50 V, but external clamp diode/snubber recommended)
 * Max 500 mA per channel in ON state, with overcurrent and thermal protection
 * Suitable for driving small relays/contactors, indicators, actuators.

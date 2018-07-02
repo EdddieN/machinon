@@ -1,5 +1,7 @@
 # machinon
-Interface and control for the machinon board
+Interface and control documentation for machinon 
+
+![Image of machinon](https://raw.githubusercontent.com/EdddieN/machinon/master/files/images/machinon.jpg)
 
 ## Documentation
 * [Hardware Specification](hardware_spec.md)

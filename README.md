@@ -5,5 +5,5 @@ Interface and control documentation for machinon
 
 ## Documentation
 * [Hardware Specification](hardware_spec.md)
-* [Hardware Description](hardware_description.md)
+* [Hardware Description](documentation/hardware_description.md)
 * [Machinon data messages](machinon_data_messages.md)

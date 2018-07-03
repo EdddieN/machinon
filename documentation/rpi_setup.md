@@ -10,13 +10,13 @@ The steps below are based on starting with a clean install of the official Raspi
 2. With SD card still in PC card reader, create new empty file `ssh` in root directory (/boot partition) to enable SSH login.
 3. Edit `/boot/config.txt` and add the following lines:  
    ```
-   dtoverlay=sc16is752-spi1,24
-   dtoverlay=i2c-rtc,mcp7941x
-   dtoverlay=pi3-act-led, gpio=26
-   dtoverlay=pi3-miniuart-bt  #for Pi3 only
-   dtoverlay=pi3-disable-wifi  #optional to disable wifi
-   dtoverlay=pi3-disable-bt  #to disable bluetooth
-   enable_uart=1`  #for Pi3 and Jessie or later
+   dtoverlay=sc16is752-spi1,24      # add support for SC16IS752 SPI-UART expander chip
+   dtoverlay=i2c-rtc,mcp7941x       # add support for RTC chip
+   dtoverlay=pi3-act-led, gpio=26   # move ACT LED function to GPIO26
+   dtoverlay=pi3-miniuart-bt        # swap "miniuart" and PL011 UART for better machinon serial comms (for Pi3 only)
+   dtoverlay=pi3-disable-wifi       # optional to disable wifi
+   dtoverlay=pi3-disable-bt         # optional to disable bluetooth
+   enable_uart=1                    # enable UART for Pi3 and Jessie or later
    ```
 4. Edit `/boot/cmdline.txt` and remove the text `console=serial0,115200` to allow applications to use serial port. See https://www.raspberrypi.org/documentation/configuration/uart.md for more info.
 5. Connect the Pi to the Machinon board with the GPIO ribbon cable and power up. Wait for the Pi to boot, then find its IP and log in via SSH (use PuTTY or similar SSH client)
@@ -45,7 +45,7 @@ The steps below are based on starting with a clean install of the official Raspi
     2. Alternatively, edit the "fall back to static IP" section to make the Pi fall back to that static IP if DHCP fails.
     3. Reboot for network changes to take effect
 11. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1"):
-    1. create a new udev rules file /etc/udev/rules.d/98-minibms.rules with:  
+    1. create a new udev rules file `/etc/udev/rules.d/98-minibms.rules` with:  
        ```
        KERNEL=="ttySC0" SYMLINK="serial2"
        KERNEL=="ttySC1" SYMLINK="serial3"

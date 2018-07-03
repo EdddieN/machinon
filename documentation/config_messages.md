@@ -118,12 +118,9 @@ Message Format:
 
 where:
 * `<channel>` = `1`...`16` (to select DIN01...DIN16)  
-* `<sensor_type>` is one of the supported MySensors sensor type codes:
-  * `21` = S_WATER for Volume
-  * `13` = S_POWER for Energy
-* `<value_type>` is one of the supported MySensors data value type codes:
-  * `35` = Volume as S_WATER / V_VOLUME
-  * `18` = Energy as S_POWER / V_KWH
+* `<sensor_type>,<value_type>` is one of the supported MySensors sensor/value type code pairs:
+  * `21,35` = Volume as S_WATER / V_VOLUME
+  * `13,18` = Energy as S_POWER / V_KWH
 
 NB the `<sensor_type>,<value_type>` pair must be a supported MySensors combination, eg `13,35` is not a standard sensor/value combination.
 
@@ -172,12 +169,9 @@ Message Format:
 
 where:
 * `<channel>` = `1`...`6` to specify input CT1...CT6  
-* `<sensor_type>` is one of the supported MySensors sensor type codes:
-  * `30` = Current as S_MULTIMETER
-  * `13` = Power as S_POWER
-* `<value_type>` is one of the supported MySensors data value type codes:
-  * `39` = Current as S_MULTIMETER / V_CURRENT
-  * `17` = Power as S_POWER / V_WATT
+* `<sensor_type>,<value_type>` is one of the supported MySensors sensor/value type code pairs:
+  * `30,39` = Current as S_MULTIMETER / V_CURRENT
+  * `13,17` = Power as S_POWER / V_WATT
 
 NB the `<sensor_type>,<value_type>` pair must be a supported MySensors combination, eg `30,17` is not a standard sensor/value combination.
 
@@ -234,7 +228,7 @@ Raw value `0` represents minimum nominal input (eg 0V or 4mA) and raw value `1` 
 
 Examples:  
 `4;3;1;0;25;0,30\n` = set AIN3 to report as 0-30V when configured for 0-10V input mode.  
-`4;1;1;0;25;0,-10,120\n` = set AIN1 to report as `-10`...`+110` when configured for 4-20mA input mode, for a 4-20mA temperature transmitter/sensor with range -10 to +110C [Span = -10 + 110 = 120 so use this as multiplier. Raw value for 4mA is 0, so just use -10 as offset]  
+`4;1;1;0;25;0,-10,120\n` = set AIN1 to report as `-10`...`+110` when configured for 4-20mA input mode, for a 4-20mA temperature transmitter/sensor with range -10 to +110C (Span = -10 + 110 = 120 so use this as multiplier. Raw value for 4mA is 0, so just use -10 as offset)  
 `4;1;2;0;25;0\n` = request the existing offset/multiplier for AIN1. Machinon ignores the payload parameter and responds with a set V_VAR2 message such as: `4;1;1;0;25;-10,120\n`
 
 ### Set Analogue Value Type
@@ -245,21 +239,14 @@ Message format:
 
 where:
 * `<channel>` = `1`...`8` to specify AIN1...AIN8  
-* `<sensor_type>` is one of the supported MySensors sensor type codes:
-  * `6` = Temperature as S_TEMP
-  * `7` = Humidity as S_HUM
-  * `30` = Voltage or Current as S_MULTIMETER
-  * `13` = Power as S_POWER
-  * `16` = Light Level (%) as S_LIGHT_LEVEL
-  * `23` = Other/Custom as S_CUSTOM
-* <value_type> is one of the supported MySensors data value type codes:
-  * `0` = Temperature as S_TEMP / V_TEMP
-  * `1` = Humidity as S_HUM / V_HUM
-  * `38` = Voltage as S_MULTIMETER / V_VOLTAGE
-  * `39` = Current as S_MULTIMETER / V_CURRENT
-  * `17` = Power as S_POWER / V_WATT (for current transducer etc)
-  * `37` = Level (%) as S_LIGHT_LEVEL / V_LEVEL
-  * `48` = Other/Custom as S_CUSTOM / V_CUSTOM
+* `<sensor_type>,<value_type>` is one of the supported MySensors sensor/value type code pairs:
+  * `6,0` = Temperature as S_TEMP / V_TEMP
+  * `7,1` = Humidity as S_HUM / V_HUM
+  * `30,38` = Voltage as S_MULTIMETER / V_VOLTAGE
+  * `30,39` = Current as S_MULTIMETER / V_CURRENT
+  * `13,17` = Power as S_POWER / V_WATT (for current transducer etc)
+  * `16,37` = Level (%) as S_LIGHT_LEVEL / V_LEVEL
+  * `23,48` = Other/Custom as S_CUSTOM / V_CUSTOM
 
 NB the `<sensor_type>,<value_type>` pair must be a supported MySensors combination, eg `6,1` is not a standard sensor/value combination.
 

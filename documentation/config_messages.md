@@ -188,7 +188,7 @@ Message format:
 where `<cal>` is a decimal calibration value, eg `1.02` or `0.98` that adjusts the measured current on all channels to give correct 0...1 output. Default is `1` (no calibration).
 
 Examples:  
-`3;1;1;0;27;1.015` to apply a +1.5% correction if the device reads 1.5% low.
+`3;1;1;0;27;1.015` to apply a +1.5% correction if the device reads 1.5% low.  
 `3;1;2;0;27;0` to request the existing calibration factor (Machinon ignores the payload parameter and responds with a set V_VAR4 message).
 
 ## Analogue Inputs Configuration
@@ -214,7 +214,7 @@ Examples:
 ### Set Analogue Input Multiplier
 Send a "set V_VAR2" message with node_id=`4` to set the slope and offset parameters which scale the raw analogue value to a meaningful range. Machinon multiplies the raw value 0...1 by the slope, then adds the offset.
 
-Default values are `<slope>`=`1` and `<offset>`=`0` which give as output the raw analogue value 0...1
+Default values are slope=`1` and offset=`0` which give as output the raw analogue value 0...1
 
 Message format:  
 `4;<channel>;1;0;25;<offset>,<slope>\n`

@@ -1,7 +1,7 @@
 # machinon
 Interface and control documentation for machinon 
 
-![Image of machinon](images/machinon.jpg)
+![Image of machinon](files/images/machinon.jpg)
 
 ## Documentation
 * [Hardware Specification](documentation/hardware_spec.md)

@@ -196,3 +196,61 @@ echo "0" > /sys/class/gpio/gpio13/value
 # Clean up (disables GPIO pin)
 echo "13" > /sys/class/gpio/unexport
 ```
+
+## Machinon Firmware Update
+The Machinon board uses two Atmel XMEGA microcontrollers (main and slave) to handle its I/O and internal functions. Each microcontroller has a bootloader that allows firmware updates using the AVR109/AVR1605 serial protocol supported by programming software such as AVRDUDE.
+
+The main XMEGA bootloader is triggered by hardware reset from the host Raspberry Pi (MySensors command message or GPIO pulse). The slave XMEGA bootload is handled through the main XMEGA and is triggered with a MySensors command message. The Machinon support software includes shell scripts to handle the firmware update using AVRDUDE.
+
+The bootloaders operate at 115200 bits/sec on the configuration port (same serial settings as for configuration messages). This is normally ttySC1 on the Raspberry Pi.
+
+### Install AVRDude
+The Raspberry Pi repository includes AVRDUDE 6.3-2 as at June 2018. Install with:  
+`sudo apt-get install avrdude`
+
+And check that it works (this should print the version number):  
+`avrdude -v`
+
+### Main XMEGA Bootload
+To update the main XMEGA firmware using the support script:
+1. Copy the firmware HEX file to the directory that contains the script and rename it to `machinon_main.hex`.
+2. Run the updater script with the `-m` parameter to perform the bootload:  
+`./fwupdate.sh -m`
+
+To update the main XMEGA firmware manually:
+1. Send the "run main bootloader" command (a MySensors format message) on the configuration port:
+   ```
+   IFS=$'\n'
+   stty -F /dev/ttySC1 raw ispeed 115200 ospeed 115200 cs8 -crtscts
+   echo "0;1;1;0;25;1" > /dev/ttySC1
+   ```
+   OR  
+   Reset the XMEGA directly. Run the Machinon support script `reset-machinon.sh -m` or manually generate a >10ms reset pulse on GPIO23 with the steps below:
+   ```
+   echo "23" > /sys/class/gpio/export
+   sleep 0.5  # allow time for filesystem changes
+   echo "out" > /sys/class/gpio/gpio23/direction
+   echo "1" > /sys/class/gpio/gpio23/value
+   sleep 0.05  # wait for 50 ms to ensure that AVR resets
+   echo "0" > /sys/class/gpio/gpio23/value
+   echo "23" > /sys/class/gpio/unexport
+   ```
+2. Run AVRDude within 5 seconds to do the bootload:  
+`avrdude -v -p atxmega256a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_main.hex:i -e`
+
+### Slave XMEGA Bootload
+To update the slave XMEGA firmware using the support script:
+1. Copy the firmware HEX file to the directory that contains the script and rename it to `machinon_slave.hex`.
+2. Run the updater script with the `-s` parameter to perform the bootload:  
+`./fwupdate.sh -s`
+
+To update the slave XMEGA firmware manually:
+1. Send the "run slave bootloader" command (a MySensors format message) on the configuration port:
+   ```
+   IFS=$'\n'
+   stty -F /dev/ttySC1 raw ispeed 115200 ospeed 115200 cs8 -crtscts
+   echo "0;1;1;0;25;2" > /dev/ttySC1
+   ```
+2. Run AVRDude within 5 seconds to do the bootload:  
+`avrdude -v -p atxmega64a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_slave.hex:i -e`
+

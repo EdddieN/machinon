@@ -64,7 +64,8 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 
 1. Install NGINX (and php-fpm if required. On Raspian Stretch this will install PHP7.0)  
 `sudo apt install nginx php-fpm`
-2. Edit PHP section of NGINX conf file as below to handle php:  
+2. Edit PHP section of NGINX conf file as below to handle php. To do this, edit the file “/etc/nginx/sites-available/default“, for example via the command: `sudo nano /etc/nginx/sites-available/default`    
+and edit file:  
    ```
    # pass PHP scripts to FastCGI server
    #

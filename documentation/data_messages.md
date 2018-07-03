@@ -231,8 +231,8 @@ Machinon also sends a presentation message after the data type of a channel is c
 
 Example presentation messages from the Machinon board:  
 `1;1;3;0;11;DI Status` = internal msg, node 1, child 1, I_SKETCH_NAME  
-`1;1;3;0;12;0.1.`2 = internal msg, node 1, child 1, I_SKETCH_VERSION  
-`1;1;0;0;3;DI1 Statu`s = present node 1, child 1 as S_BINARY with given name.
+`1;1;3;0;12;0.1.2` = internal msg, node 1, child 1, I_SKETCH_VERSION  
+`1;1;0;0;3;DI1 Status` = present node 1, child 1 as S_BINARY with given name.
 
 `2;1;0;0;13;DI1 Count` = present node 2, child 1 as S_POWER with name.  
 `2;1;3;0;11;Digital Counters` = internal msg, node 2, child 1, I_SKETCH_NAME  

@@ -64,8 +64,12 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 
 1. Install NGINX (and php-fpm if required. On Raspian Stretch this will install PHP7.0)  
 `sudo apt install nginx php-fpm`
-2. Edit PHP section of NGINX conf file as below to handle php. To do this, edit the file “/etc/nginx/sites-available/default“, for example via the command: `sudo nano /etc/nginx/sites-available/default`    
-and edit file:  
+2. Create a new NGINX config file based on the default config:
+   ```
+   cd /etc/nginx/sites-available/default
+   sudo cp default /etc/nginx/conf.d/nginx-machinon.conf
+   ```
+3. Update the new nginx-machinon.conf file with the content below:
    ```
    # pass PHP scripts to FastCGI server
    #
@@ -78,14 +82,14 @@ and edit file:
        #fastcgi_pass 127.0.0.1:9000;
    }
    ```
-3. Reload config (or start server):  
-`sudo service nginx restart`  
-or  
+4. Disable the default config by deleting the "sites-enabled" symbolic link:
+`sudo rm /etc/nginx/sites-enabled/default`
+5. Reload nginx config:  
 `sudo nginx -s reload`
-4. Copy the config forms PHP files and resources to the NGINX web pages directory, under a "config" subdirectory, and set permissions to allow NGINX to access the files and execute the .sh scripts.
+6. Copy the config forms PHP files and resources to the NGINX web pages directory, under a "config" subdirectory (typically `/var/www/html/config/`), and set file/directory permissions to allow NGINX `www-data` user to access the files and execute the .sh scripts.
 
 ### Proxying Domoticz content with NGINX
-NGINX can also proxy the web pages served by Domoticz or other automation servers, allowing HTTPS access on a different port if required. Set Domoticz to use a non-standard port such as 8080 (for HTTP) or 4443 (for HTTPS), and use the following NGINX conf file to redirect and proxy the requests.
+NGINX can also proxy the web pages served by Domoticz or other automation servers, allowing HTTPS access on the same port as the config pages if required. Set Domoticz to use a non-standard port such as 8080 (for HTTP) or 4443 (for HTTPS), and update the nginx-machinon.conf (created above) with the following content. Then reload the config as above.
 ```
 # Redirect all HTTP requests to HTTPS
 server {
@@ -150,8 +154,11 @@ server {
         # Optionally add authentication, unless the host software has login authentication
         #auth_basic "Restricted";
         #auth_basic_user_file /etc/nginx/.htpasswd;
-        # NB: set Domoticz to use port 4443 for SSL, so that the default 443 can be used by NGINX
-        proxy_pass https://localhost:4443/;
+        # NB: set Domoticz to use port 4443 for SSL (or port 0 to disable SSL), so that the default 443 can be used by NGINX
+        # Pass requests to Domoticz HTTPS port
+        #proxy_pass https://localhost:4443/;
+        # OR Pass requests to Domoticz HTTP port
+        proxy_pass https://localhost:8080/;
         proxy_set_header  Host $host;
         proxy_set_header  X-Real-IP $remote_addr;
         proxy_set_header  X-Forwarded-Proto https;

@@ -219,16 +219,25 @@ The main XMEGA bootloader is triggered by hardware reset from the host Raspberry
 
 The bootloaders operate at 115200 bits/sec on the configuration port (same serial settings as for configuration messages). This is normally ttySC1 on the Raspberry Pi.
 
-### Install AVRDude
-The Raspberry Pi repository includes AVRDUDE 6.3-2 as at June 2018. Install with:  
-`sudo apt-get install avrdude`
+### Install AVRDUDE and machinon support scripts
+The Raspberry Pi repository includes AVRDUDE 6.3 as at June 2018. Install with:  
+```
+sudo apt-get install avrdude
+```
 
 And check that it works (this should print the version number):  
-`avrdude -v`
+```
+avrdude -v
+```
+
+Copy the scripts from https://github.com/EdddieN/machinon/tree/master/files/scripts to a suitable directory on the Pi (eg home folder `/home/pi/`), and make them executable with:
+```
+sudo chmod ug+x *.sh
+```
 
 ### Main XMEGA Bootload
-To update the main XMEGA firmware using the support script:
-1. Copy the firmware HEX file to the directory that contains the script and rename it to `machinon_main.hex`.
+To update the main XMEGA firmware using the `fwupdate.sh` support script:
+1. Copy the new firmware HEX file to the directory that contains the script and rename it to `machinon_main.hex`.
 2. Run the updater script with the `-m` parameter to perform the bootload:  
 `./fwupdate.sh -m`
 
@@ -251,13 +260,17 @@ To update the main XMEGA firmware manually:
    echo "23" > /sys/class/gpio/unexport
    ```
 2. Run AVRDude within 5 seconds to do the bootload:  
-`avrdude -v -p atxmega256a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_main.hex:i -e`
+   ```
+   avrdude -v -p atxmega256a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_main.hex:i -e
+   ```
 
 ### Slave XMEGA Bootload
 To update the slave XMEGA firmware using the support script:
-1. Copy the firmware HEX file to the directory that contains the script and rename it to `machinon_slave.hex`.
+1. Copy the new firmware HEX file to the directory that contains the script and rename it to `machinon_slave.hex`.
 2. Run the updater script with the `-s` parameter to perform the bootload:  
-`./fwupdate.sh -s`
+   ```
+   ./fwupdate.sh -s
+   ```
 
 To update the slave XMEGA firmware manually:
 1. Send the "run slave bootloader" command (a MySensors format message) on the configuration port:
@@ -267,5 +280,6 @@ To update the slave XMEGA firmware manually:
    echo "0;1;1;0;25;2" > /dev/ttySC1
    ```
 2. Run AVRDude within 5 seconds to do the bootload:  
-`avrdude -v -p atxmega64a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_slave.hex:i -e`
-
+   ```
+   avrdude -v -p atxmega64a3u -c avr109 -P /dev/ttySC1 -b 115200 -U flash:w:machinon_slave.hex:i -e
+   ```

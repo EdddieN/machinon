@@ -86,7 +86,14 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 `sudo rm /etc/nginx/sites-enabled/default`
 5. Reload nginx config:  
 `sudo nginx -s reload`
-6. Copy the config forms PHP files and resources to the NGINX web pages directory, under a "config" subdirectory (typically `/var/www/html/config/`), and set file/directory permissions to allow NGINX `www-data` user to access the files and execute the .sh scripts.
+6. Copy the config forms PHP files and resources from https://github.com/EdddieN/machinon/tree/master/files/config-forms to the NGINX web pages directory, under a "config" subdirectory (typically `/var/www/html/config/`), and set file/directory permissions to allow NGINX `www-data` user to access the files and execute the .sh script:
+   ```
+   sudo chown -R www-data /var/www/html
+   sudo chmod -R 770 /var/www/html/
+   sudo usermod -a -G dialout www-data
+   sudo usermod -a -G www-data pi
+   ```
+7. Test the config forms by browsing to `https://<IP_of_machinon>/config` which should show the AIN channels configuration form with the existing inputs configuration. Make some changes and click Submit. The form should reload and show the new configuration.
 
 ### Proxying Domoticz content with NGINX
 NGINX can also proxy the web pages served by Domoticz or other automation servers, allowing HTTPS access on the same port as the config pages if required. Set Domoticz to use a non-standard port such as 8080 (for HTTP) or 4443 (for HTTPS), and update the nginx-machinon.conf (created above) with the following content. Then reload the config as above.

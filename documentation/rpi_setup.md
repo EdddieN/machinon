@@ -98,18 +98,20 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 ### Proxying Domoticz content with NGINX
 NGINX can also proxy the web pages served by Domoticz or other automation servers, allowing HTTPS access on the same port as the config pages if required. Set Domoticz to use a non-standard port such as 8080 (for HTTP) or 4443 (for HTTPS), and update the nginx-machinon.conf (created above) with the following content. Then reload the config as above.
 ```
-# Redirect all HTTP requests to HTTPS
-server {
-    listen 80;
-    #listen [::]:80;
-    server_name localhost;
-    return 302 https://$host$request_uri;
-}
+# Optionally Redirect all HTTP requests to HTTPS
+#server {
+#    listen 80;
+#    #listen [::]:80;
+#    server_name localhost;
+#    return 302 https://$host$request_uri;
+#}
 
 # Default server configuration
 server {
+    # Optionally listen on HTTP port 80 (comment out the 80 -> 443 redirect above)
+    listen 80 default_server;
+    
     # SSL configuration
-    #
     listen 443 ssl default_server;
     #listen [::]:443 ssl default_server;
     #

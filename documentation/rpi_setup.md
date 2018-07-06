@@ -136,12 +136,12 @@ server {
     location = / {
         # Redirect requests for "/" to the Domoticz directory
         # Change to match your actual installation directory
-        rewrite ^ https://$host/domoticz/ ;
+        rewrite ^ $scheme://$host/domoticz/ ;
     }
 
     location / {
         # Redirect requests for files in "/" to the Domoticz directory
-        #rewrite ^(/)$ https://$host/domoticz/ ;
+        #rewrite ^(/)$ $scheme://$host/domoticz/ ;
         
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.

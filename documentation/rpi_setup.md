@@ -66,7 +66,7 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 `sudo apt install nginx php-fpm`
 2. Create a new NGINX config file based on the default config:
    ```
-   cd /etc/nginx/sites-available/default
+   cd /etc/nginx/sites-available
    sudo cp default /etc/nginx/conf.d/nginx-machinon.conf
    ```
 3. Update the new nginx-machinon.conf file with the content below:

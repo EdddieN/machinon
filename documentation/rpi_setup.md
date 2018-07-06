@@ -167,7 +167,7 @@ server {
         # Pass requests to Domoticz HTTPS port
         #proxy_pass https://localhost:4443/;
         # OR Pass requests to Domoticz HTTP port
-        proxy_pass https://localhost:8080/;
+        proxy_pass http://localhost:8080/;
         proxy_set_header  Host $host;
         proxy_set_header  X-Real-IP $remote_addr;
         proxy_set_header  X-Forwarded-Proto https;

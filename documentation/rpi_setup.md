@@ -18,23 +18,28 @@ The steps below are based on starting with a clean install of the official Raspi
    dtoverlay=pi3-disable-bt         # optional to disable bluetooth
    enable_uart=1                    # enable UART for Pi3 and Jessie or later
    ```
-4. Edit `/boot/cmdline.txt` and remove the text `console=serial0,115200` to allow applications to use serial port. See https://www.raspberrypi.org/documentation/configuration/uart.md for more info.
-5. Connect the Pi to the Machinon board with the GPIO ribbon cable and power up. Wait for the Pi to boot, then find its IP and log in via SSH (use PuTTY or similar SSH client)
-6. Run raspi-config and:  
+4. Disable bluetooth service from starting:
+   ```
+   sudo systemctl disable hciuart
+   ```
+   
+5. Edit `/boot/cmdline.txt` and remove the text `console=serial0,115200` to allow applications to use serial port. See https://www.raspberrypi.org/documentation/configuration/uart.md for more info.
+6. Connect the Pi to the Machinon board with the GPIO ribbon cable and power up. Wait for the Pi to boot, then find its IP and log in via SSH (use PuTTY or similar SSH client)
+7. Run raspi-config and:  
    1. Enable SPI
    1. Enable I2C
    1. Enable Serial (but disable login shell over serial) (should already be done by the previous edits to config.txt and cmdline.txt)
    1. Expand filesystem to fill card
    1. Change GPU memory to 16 MB (not essential)
-7. Edit `/etc/modules` and add a new line with `rtc-mcp7941x`
-8. Edit `/lib/udev/hwclock-set` and comment out (add # to start of lines) the lines:  
+8. Edit `/etc/modules` and add a new line with `rtc-mcp7941x`
+9. Edit `/lib/udev/hwclock-set` and comment out (add # to start of lines) the lines:  
    ```
    if [ -e /run/systemd/system ] ; then
        exit 0
    fi
    ```
-9. Reboot and check that the Pi has correct time from network. Then optionally manually set HW clock with `sudo hwclock -w` to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with `sudo hwclock -r` to set the system clock from the HW clock. The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
-10. Optionally set static IP:  
+10. Reboot and check that the Pi has correct time from network. Then optionally manually set HW clock with `sudo hwclock -w` to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with `sudo hwclock -r` to set the system clock from the HW clock. The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
+11. Optionally set static IP:  
     1. Edit /etc/dhcpcd.conf and uncomment or add these lines (change to suit):  
        ```
        interface eth0
@@ -44,7 +49,7 @@ The steps below are based on starting with a clean install of the official Raspi
        ```
     2. Alternatively, edit the "fall back to static IP" section to make the Pi fall back to that static IP if DHCP fails.
     3. Reboot for network changes to take effect
-11. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1"):
+12. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1"):
     1. create a new udev rules file `/etc/udev/rules.d/98-minibms.rules` with:  
        ```
        KERNEL=="ttySC0" SYMLINK="serial2"
@@ -54,8 +59,8 @@ The steps below are based on starting with a clean install of the official Raspi
     3. Check for the aliases serial2 and serial3:  
     `ls -l /dev`  
     (serial0 and serial1 are the Pi internal ports)
-12. Change the default password, or optionally add a new user to run everything as instead of "pi". See https://mattwilcox.net/web-development/setting-up-a-secure-home-web-server-with-raspberry-pi for ideas.
-13. Install any other desired updates, packages, etc. For Domoticz suggestions see https://www.domoticz.com/wiki/Raspberry_Pi#Raspberry_Pi_additional_software_installations
+13. Change the default password, or optionally add a new user to run everything as instead of "pi". See https://mattwilcox.net/web-development/setting-up-a-secure-home-web-server-with-raspberry-pi for ideas.
+14. Install any other desired updates, packages, etc. For Domoticz suggestions see https://www.domoticz.com/wiki/Raspberry_Pi#Raspberry_Pi_additional_software_installations
 
 ## Install NGINX with PHP
 The Machinon software support includes a set of PHP web forms to make the I/O configuration simple. This requires a web server that supports PHP, such as NGINX.

@@ -25,6 +25,11 @@ if [[ "$1" = "-m" ]] ; then
         hexfile=$2   # save the command (2nd argument)
     fi
 
+    if [[ ! -f "${hexfile}" ]] ; then
+        echo "'${hexfile}' not found!"
+        exit 1
+    fi
+
     if [[ -f "${reset_script}" ]] ; then
         bash ${reset_script}
         sleep 0.5  # allow AVR bootloader to start
@@ -42,6 +47,11 @@ elif [[ "$1" = "-s" ]] ; then
         echo "Using default HEX file '${hexfile}'"
     else
         hexfile=$2   # save the command (2nd argument)
+    fi
+
+    if [[ ! -f "${hexfile}" ]] ; then
+        echo "'${hexfile}' not found!"
+        exit 1
     fi
 
     if [[ -f "${reset_script}" ]] ; then

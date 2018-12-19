@@ -91,7 +91,7 @@ See https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md 
 `sudo rm /etc/nginx/sites-enabled/default`
 5. Reload nginx config:  
 `sudo nginx -s reload`
-6. Copy the config forms PHP files and resources from https://github.com/EdddieN/machinon/tree/master/files/config-forms to the NGINX web pages directory, under a "config" subdirectory (typically `/var/www/html/config/`), and set file/directory permissions to allow NGINX `www-data` user to access the files and execute the .sh script:
+6. Copy the config forms PHP files and resources from https://github.com/EdddieN/machinon_config to the NGINX web pages directory, under a "config" subdirectory (typically `/var/www/html/config/`), and set file/directory permissions to allow NGINX `www-data` user to access the files and execute the .sh script:
    ```
    sudo chown -R www-data /var/www/html
    sudo chmod -R 770 /var/www/html/

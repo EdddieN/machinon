@@ -174,8 +174,10 @@ See <https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md
    apt-get install ssl-cert
    ```
 3. Create a new empty NGINX config file:
+   ```
    cd /etc/nginx/sites-available
    sudo nano nginx-machinon.conf
+   ```
 4. Paste in the following content, then save/exit (Ctrl+X):
 ```
 \# Machinon Web Config Interface and Proxy Server Configuration
@@ -362,18 +364,30 @@ server {
 ```
 
 1. Disable the default config by deleting the "sites-enabled" symbolic link:
+   ```
    sudo rm /etc/nginx/sites-enabled/default
+   ```
 2. Create symbolic link to the config file so that NGINX uses it:
+   ```
    cd /etc/nginx/sites-enabled
    sudo ln -s ../sites-available/nginx-machinon.conf nginx-machinon.conf
+   ```
 3. Reload config (or start server):
+   ```
    sudo service nginx restart
+   ```
    or
+   ```
    sudo nginx -s reload
+   ```
 4. Set user/group permissions to allow NGINX group/user www-data to access the serial port:
+   ```
    sudo usermod -a -G dialout www-data
    sudo usermod -a -G www-data pi
+   ```
    (need to reboot for group changes to take effect)
 5. Clone the config forms PHP files and resources to the NGINX web pages directory:
+   ```
    cd /var/www/html
    git clone https://github.com/EdddieN/machinon_config .
+   ```

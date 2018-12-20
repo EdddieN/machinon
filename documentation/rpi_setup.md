@@ -156,11 +156,8 @@ WantedBy=multi-user.target
 5. Add Hardware on Domoticz
 
 6. 1. Add MySensors USB Gateway new hardware under ‘Hardware’ menu
-   2. Call is machinon IO
+   2. Call is machinon_io
    3. Select Serial port: serial0
-   4. Add ModBus (if modbus plugin active) and select serial485
-
-7. Edit machinon I/Os with names
 
 ## Install NGINX with PHP
 
@@ -169,9 +166,13 @@ The Machinon software support includes a set of PHP web forms to make the I/O co
 See <https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md> and <https://howtoraspberrypi.com/install-nginx-raspbian-and-accelerate-your-raspberry-web-server/> for NGINX install details.
 
 1. Install NGINX (and php-fpm if required. On Raspian Stretch this will install PHP7.0)
+   ```
    sudo apt install nginx php-fpm
+   ```
 2. For HTTPS access on NGINX, either install your own certificate and specify this in the config file below, OR install the ‘snakeoil’ non-production certificate:
+   ```
    apt-get install ssl-cert
+   ```
 3. Create a new empty NGINX config file:
    cd /etc/nginx/sites-available
    sudo nano nginx-machinon.conf

@@ -163,7 +163,7 @@ See <https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md
    cd /etc/nginx/sites-available
    sudo nano nginx-machinon.conf
 4. Paste in the following content, then save/exit (Ctrl+X):
-
+```
 \# Machinon Web Config Interface and Proxy Server Configuration
 
 \# Optionally Redirect all HTTP requests to HTTPS (will not work for tunneled requests with different URL path)
@@ -345,6 +345,7 @@ server {
     }
 
 }
+```
 
 1. Disable the default config by deleting the "sites-enabled" symbolic link:
    sudo rm /etc/nginx/sites-enabled/default

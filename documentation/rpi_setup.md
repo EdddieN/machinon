@@ -87,14 +87,15 @@ The steps below are based on starting with a clean install of the official Raspi
 The steps below apply to Domoticz automation software (version 4.9700 or later) on Raspberry Pi (Debian Stretch Lite 2018-06-27 or later), but the same principles can be applied to other automation software. refer to the documentation for your preferred software for configuration details.
 
 1. Install latest Domoticz release using the command below. See official install guide at [https://www.domoticz.com/wiki/Raspberry_Pi
-   ](https://www.domoticz.com/wiki/Raspberry_Pi)curl -L install.domoticz.com | sudo bash
+   ](https://www.domoticz.com/wiki/Raspberry_Pi)  
+   ```curl -L install.domoticz.com | sudo bash```  
    (choose HTTP port=8080 and HTTPS port=4443 when prompted)
 
-2. Optional: Change the service startup mode to use systemd (on Raspian Stretch) and change user that Domoticz runs as (default is root if running under init.d ???). See <https://www.domoticz.com/wiki/Linux> for info.
+2. Optional: Change the service startup mode to use systemd (on Raspian Stretch) and change user that Domoticz runs as. See <https://www.domoticz.com/wiki/Linux> for info.  
 
-3. 1. sudo nano /etc/systemd/system/domoticz.service
-   2. If the file is empty, add:
-      [Unit]
+3. ```sudo nano /etc/systemd/system/domoticz.service```  
+    If the file is empty, add:  
+```[Unit]
 
 Description=domoticz_service
 [Service]
@@ -118,26 +119,26 @@ RestartSec=1m
 
 [Install]
 
-WantedBy=multi-user.target
+WantedBy=multi-user.target```  
 
-1. 1. Uncomment (remove # from) lines:
-      \#User=pi
-      \#Group=users
-   2. Change -www and -sslwww ports if required (0 to disable)
+1. 1. Uncomment (remove # from) lines:  
+      ```#User=pi
+      #Group=users```  
+   2. Change ```-www``` and ```-sslwww``` ports if required (0 to disable)
    3. Save the file (Ctrl-X in nano)
 
-2. Enable the service:
-   sudo systemctl daemon-reload
-   sudo systemctl enable domoticz.service
+2. Enable the service:  
+   ```sudo systemctl daemon-reload
+   sudo systemctl enable domoticz.service```
 
 3. Start the service:
-   sudo systemctl start domoticz.service
+   ```sudo systemctl start domoticz.service```
    or
-   sudo systemctl restart domoticz.service
+   ```sudo systemctl restart domoticz.service```
 
 4. Can also run from console for testing and interactive output:
-   cd /path/to/domoticz
-   ./domoticz
+   ```cd /path/to/domoticz
+   ./domoticz```
 
 5. Add Hardware on Domoticz
 

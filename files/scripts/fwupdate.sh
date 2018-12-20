@@ -12,8 +12,8 @@
 
 # TODO automatically find the script/files
 reset_script="reset-machinon.sh"
-fw_slave="machinon_slave.hex"
-fw_main="machinon_main.hex"
+fw_slave="MiniBMS_slave.hex"
+fw_main="MiniBMS_main.hex"
 
 if [[ "$1" = "-m" ]] ; then
     # Main AVR bootload
@@ -31,7 +31,7 @@ if [[ "$1" = "-m" ]] ; then
     fi
 
     if [[ -f "${reset_script}" ]] ; then
-        bash ${reset_script}
+        bash ${reset_script} -m
         sleep 0.5  # allow AVR bootloader to start
     else
         echo "'${reset_script}' not found! Manual AVR reset required."
@@ -64,6 +64,7 @@ elif [[ "$1" = "-s" ]] ; then
         sleep 0.5  # allow AVR bootloader to start
     else
         echo "'${reset_script}' not found! Manual AVR reset required."
+        exit 1
     fi
 
     # program using AVRDUDE and default settings for RPi and Machinon

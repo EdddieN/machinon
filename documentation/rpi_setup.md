@@ -125,23 +125,33 @@ WantedBy=multi-user.target
 ```  
 
 1. 1. Uncomment (remove # from) lines:  
-      ```#User=pi
-      #Group=users```  
+      ```
+      #User=pi
+      #Group=users
+      ```  
    2. Change ```-www``` and ```-sslwww``` ports if required (0 to disable)
    3. Save the file (Ctrl-X in nano)
 
 2. Enable the service:  
-   ```sudo systemctl daemon-reload
-   sudo systemctl enable domoticz.service```
+   ```
+   sudo systemctl daemon-reload
+   sudo systemctl enable domoticz.service
+   ```
 
 3. Start the service:
-   ```sudo systemctl start domoticz.service```
+   ```
+   sudo systemctl start domoticz.service
+   ```
    or
-   ```sudo systemctl restart domoticz.service```
+   ```
+   sudo systemctl restart domoticz.service
+   ```
 
 4. Can also run from console for testing and interactive output:
-   ```cd /path/to/domoticz
-   ./domoticz```
+   ```
+   cd /path/to/domoticz
+   ./domoticz
+   ```
 
 5. Add Hardware on Domoticz
 

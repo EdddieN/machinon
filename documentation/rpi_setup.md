@@ -121,7 +121,8 @@ RestartSec=1m
 
 [Install]
 
-WantedBy=multi-user.target```  
+WantedBy=multi-user.target
+```  
 
 1. 1. Uncomment (remove # from) lines:  
       ```#User=pi

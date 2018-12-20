@@ -22,7 +22,7 @@ The steps below are based on starting with a clean install of the official Raspi
    enable_uart=1  #for Pi3 and Jessie or later
    ```
 
-5. 
+5. Edit /boot/cmdline.txt and remove the text "console=serial0,115200" to allow applications to use serial port. See https://www.raspberrypi.org/documentation/configuration/uart.md for more info.
 
 6. Disable bluetooth service from starting (prevents service startup errors):
 

@@ -71,7 +71,7 @@ The steps below are based on starting with a clean install of the official Raspi
 
 15. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1", so here we create aliases to "serial2" for RS485 and "serial3" for machinon config):
 
-16. 1. 1. create a new udev rules file /etc/udev/rules.d/98-minibms.rules with:
+16. 1. 1. create a new udev rules file ```/etc/udev/rules.d/98-minibms.rules``` with:  
           ```KERNEL=="ttySC0" SYMLINK="serial485"```
        2. Save file and reboot
        3. Check for the aliases serial2 and serial3:

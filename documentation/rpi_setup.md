@@ -1,4 +1,4 @@
-# Raspberry Pi Software Setup
+# Machinon setup on Raspberry Pi
 
 The host Raspberry Pi requires some software setup to be able to access all features of the Machinon board, such as the SPI-UART serial ports and the RTC, and operate as a headless embedded system.
 

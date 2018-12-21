@@ -22,7 +22,8 @@ The steps below are based on starting with a clean install of the official Raspi
    enable_uart=1  #for Pi3 and Jessie or later
    ```
 
-5. Edit /boot/cmdline.txt and remove the text "console=serial0,115200" to allow applications to use serial port. See https://www.raspberrypi.org/documentation/configuration/uart.md for more info.
+5. 
+DUPLICATED ENTRY
 
 6. Disable bluetooth service from starting (prevents service startup errors):
 
@@ -53,6 +54,7 @@ The steps below are based on starting with a clean install of the official Raspi
     ```
 
     Reboot and check that the Pi has correct time from network. Then optionally manually set HW clock with `sudo hwclock -w` to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with `sudo hwclock -r` to set the system clock from the HW clock. The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
+    ADD HOW TO CHECK TIME VIA CLI
 
 13. Optionally set static IP:
 

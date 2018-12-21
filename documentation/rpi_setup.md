@@ -390,6 +390,7 @@ server {
    ```
    (need to reboot for group changes to take effect)
 5. Clone the config forms PHP files and resources to the NGINX web pages directory:
+TO REVISE, ERRORS
    ```
    cd /var/www/html
    git clone https://github.com/EdddieN/machinon_config .

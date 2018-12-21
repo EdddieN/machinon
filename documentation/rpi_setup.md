@@ -97,6 +97,7 @@ The steps below apply to Domoticz automation software (version 4.9700 or later) 
 
 3. ```sudo nano /etc/systemd/system/domoticz.service```  
     If the file is empty, add:  
+    NEEDS REVISING! NOT RIGHT
 
 ```
 [Unit]

@@ -393,5 +393,6 @@ server {
 TO REVISE, ERRORS
    ```
    cd /var/www/html
-   git clone https://github.com/EdddieN/machinon_config .
+   sudo git clone https://github.com/EdddieN/machinon_config 
+   sudo mv machhinon_config config
    ```

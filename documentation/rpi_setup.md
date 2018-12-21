@@ -394,5 +394,5 @@ TO REVISE, ERRORS
    ```
    cd /var/www/html
    sudo git clone https://github.com/EdddieN/machinon_config 
-   sudo mv machhinon_config config
+   sudo mv machinon_config config
    ```

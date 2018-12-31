@@ -6,13 +6,13 @@ The steps below are based on starting with a clean install of the official Raspi
 
 ## Raspberry Pi System Installation/Configuration
 
-1. Write standard Raspian Lite image to SD card.
+1. Write standard Raspian Lite image to SD card. Refer to Pi docs at <https://www.raspberrypi.org/downloads/raspbian/>
 
-2. With SD card still in PC card reader, create new empty file ssh in root directory (/boot partition) to enable SSH login.
+2. With SD card still in PC card reader, create new empty file `ssh` in root directory (/boot partition) to enable SSH login.
 
 3. Edit `/boot/config.txt` and add the following lines:
 
-4. ```
+   ```
    dtoverlay=sc16is752-spi1,24
    dtoverlay=i2c-rtc,mcp7941x
    dtoverlay=pi3-act-led, gpio=26
@@ -22,145 +22,137 @@ The steps below are based on starting with a clean install of the official Raspi
    enable_uart=1  #for Pi3 and Jessie or later
    ```
 
-5. 
-DUPLICATED ENTRY
+4. 
+    Edit `/boot/cmdline.txt` and remove the text `console=serial0,115200` to allow applications to use serial port. See <https://www.raspberrypi.org/documentation/configuration/uart.md> for more info.
+
+5. Insert SD card into Pi, connect the Pi to the Machinon board with the GPIO ribbon cable and power up. Wait for the Pi to boot, then find its IP and log in via SSH (use PuTTY or similar SSH client)
 
 6. Disable bluetooth service from starting (prevents service startup errors):
 
-   ```
+   ```bash
    sudo systemctl disable hciuart
    ```
 
-7. Edit `/boot/cmdline.txt` and remove the text `console=serial0,115200` to allow applications to use serial port. See <https://www.raspberrypi.org/documentation/configuration/uart.md> for more info.
+7. Run raspi-config and:
 
-8. Connect the Pi to the Machinon board with the GPIO ribbon cable and power up. Wait for the Pi to boot, then find its IP and log in via SSH (use PuTTY or similar SSH client)
+   1. Enable SPI (in interfacing options)
+   2. Enable I2C
+   3. Enable Serial (but disable login shell over serial) (should already be done by the previous edits to config.txt and cmdline.txt)
+   4. Expand filesystem to fill card
+   5. Change GPU memory to 16 MB (not essential)
+   6. Set timezone to UTC (or appropriate local TZ if desired)
+   7. Select Finish and reboot
 
-9. Run raspi-config and:
+8. Edit `/etc/modules` and add a new line with `rtc-mcp7941x`
 
-10. 1. Enable SPI
-    2. Enable I2C
-    3. Enable Serial (but disable login shell over serial) (should already be done by the previous edits to config.txt and cmdline.txt)
-    4. Expand filesystem to fill card
-    5. Change GPU memory to 16 MB (not essential)
+9. Edit `/lib/udev/hwclock-set` and comment out (add # to start of lines) the lines:
 
-11. Edit `/etc/modules` and add a new line with `rtc-mcp7941x`
+   ```bash
+   if [ -e /run/systemd/system ] ; then
+       exit 0
+   fi 
+   ```
 
-12. Edit `/lib/udev/hwclock-set` and comment out (add # to start of lines) the lines:
+10. Reboot and check that the Pi has correct time from network with the `date` command. Then optionally manually set HW clock with `sudo hwclock -w` to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with `sudo hwclock -r` to set the system clock from the HW clock. The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
+
+11. Optionally set static IP:
+
+    * Edit `/etc/dhcpcd.conf` and uncomment or add these lines (change to suit):
 
     ```
-    if [ -e /run/systemd/system ] ; then
-        exit 0
-    fi 
+    interface eth0
+    static ip_address=192.168.1.15/24
+    static routers=192.168.1.1
+    static domain_name_servers=192.168.1.1
     ```
 
-    Reboot and check that the Pi has correct time from network. Then optionally manually set HW clock with `sudo hwclock -w` to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with `sudo hwclock -r` to set the system clock from the HW clock. The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
-    ADD HOW TO CHECK TIME VIA CLI
+    * Alternatively, edit the "fall back to static IP" section to make the Pi fall back to that static IP if DHCP fails.
+    * Reboot for network changes to take effect
 
-13. Optionally set static IP:
+12. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1", so here we create an alias "serial485" for RS485)
 
-14. 1. Edit `/etc/dhcpcd.conf` and uncomment or add these lines (change to suit):
-
-       ```
-       interface eth0
-       static ip_address=192.168.1.15/24
-       static routers=192.168.1.1
-       static domain_name_servers=192.168.1.1
-       ```
-
-       Alternatively, edit the "fall back to static IP" section to make the Pi fall back to that static IP if DHCP fails.
-
-    2. Reboot for network changes to take effect
-
-15. Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1", so here we create aliases to "serial2" for RS485 and "serial3" for machinon config):
-
-16. 1. 1. create a new udev rules file ```/etc/udev/rules.d/98-minibms.rules``` with:  
+13. 1. 1. create a new udev rules file ```/etc/udev/rules.d/98-minibms.rules``` with:  
           ```KERNEL=="ttySC0" SYMLINK="serial485"```
        2. Save file and reboot
-       3. Check for the aliases serial2 and serial3:
+       3. Check for the alias `serial485`:
           ```ls -l /dev```
           (serial0 and serial1 are the Pi internal ports)
 
-17. Change the default password, or optionally add a new user to run everything as instead of "pi". See <https://mattwilcox.net/web-development/setting-up-a-secure-home-web-server-with-raspberry-pi> for ideas.
+14. Change the default password, or optionally add a new user to run everything as instead of "pi". See <https://mattwilcox.net/web-development/setting-up-a-secure-home-web-server-with-raspberry-pi> for ideas.
 
-18. Install any other desired updates, packages, etc. For Domoticz suggestions see <https://www.domoticz.com/wiki/Raspberry_Pi#Raspberry_Pi_additional_software_installations>
+15. Install any other desired updates, packages, etc. For Domoticz suggestions see <https://www.domoticz.com/wiki/Raspberry_Pi#Raspberry_Pi_additional_software_installations>
 
 ## Domoticz Setup
 
 The steps below apply to Domoticz automation software (version 4.9700 or later) on Raspberry Pi (Debian Stretch Lite 2018-06-27 or later), but the same principles can be applied to other automation software. refer to the documentation for your preferred software for configuration details.
 
-1. Install latest Domoticz release using the command below. See official install guide at [https://www.domoticz.com/wiki/Raspberry_Pi
-   ](https://www.domoticz.com/wiki/Raspberry_Pi)  
-   ```curl -L install.domoticz.com | sudo bash```  
+1. Install latest Domoticz release using the command below. See official install guide at [https://www.domoticz.com/wiki/Raspberry_Pi](https://www.domoticz.com/wiki/Raspberry_Pi) 
+   ```curl -L install.domoticz.com | sudo bash``` 
    (choose HTTP port=8080 and HTTPS port=4443 when prompted)
 
 2. Optional: Change the service startup mode to use systemd (on Raspian Stretch) and change user that Domoticz runs as. See <https://www.domoticz.com/wiki/Linux> for info.  
+    1. Edit/create the service unit config: ```sudo nano /etc/systemd/system/domoticz.service```
+        If the file is empty, add:
+        NEEDS REVISING! NOT RIGHT
 
-3. ```sudo nano /etc/systemd/system/domoticz.service```  
-    If the file is empty, add:  
-    NEEDS REVISING! NOT RIGHT
+        ```
+        [Unit]
+        Description=domoticz_service
+        
+        [Service]
+        User=pi
+        Group=users
+        ExecStart=/home/pi/domoticz/domoticz -www 8080 -sslwww 4443
+        WorkingDirectory=/home/pi/domoticz
+        ExecStartPre=setcap 'cap_net_bind_service=+ep' /home/pi/domoticz/domoticz
+        Restart=on-failure
+        RestartSec=1m
+        #StandardOutput=null
+        
+        [Install]
+        WantedBy=multi-user.target
+        ```
 
-```
-[Unit]
+    2. Uncomment (remove # from) lines: 
 
-Description=domoticz_service
-[Service]
+        ```
+        #User=pi
+        #Group=users
+        ```
 
-User=pi
+    3. Change ```-www``` and ```-sslwww``` ports if required (0 to disable)
 
-Group=users
+    4. Save the file (Ctrl-X in nano)
 
-    ExecStart=/home/pi/domoticz/domoticz -www 8080 -sslwww 4443
+3. Enable the service:
 
-WorkingDirectory=/home/pi/domoticz
-
-ExecStartPre=setcap 'cap_net_bind_service=+ep'
-/home/pi/domoticz/domoticz
-
-Restart=on-failure
-
-RestartSec=1m
-
-\#StandardOutput=null
-
-[Install]
-
-WantedBy=multi-user.target
-```  
-
-1. 1. Uncomment (remove # from) lines:  
-      ```
-      #User=pi
-      #Group=users
-      ```  
-   2. Change ```-www``` and ```-sslwww``` ports if required (0 to disable)
-   3. Save the file (Ctrl-X in nano)
-
-2. Enable the service:  
-   ```
+   ```bash
    sudo systemctl daemon-reload
    sudo systemctl enable domoticz.service
    ```
 
-3. Start the service:
-   ```
+4. Start the service:
+
+   ```bash
    sudo systemctl start domoticz.service
    ```
    or
-   ```
+   ```bash
    sudo systemctl restart domoticz.service
    ```
 
-4. Can also run from console for testing and interactive output:
-   ```
+5. Can also run from console for testing and interactive output:
+   ```bash
    cd /path/to/domoticz
    ./domoticz
    ```
 
-5. Add Hardware on Domoticz
+6. Add Hardware on Domoticz:
 
-6. 1. Add MySensors USB Gateway new hardware under ‘Hardware’ menu
-   2. Call is machinon_io
-   3. Select Serial port: serial0
+    1. Add a new "MySensors USB Gateway" hardware under "Hardware" menu
+       1. Name the hardware "Machinon_IO" or similar
+       2. Select Serial port `serial0` and baut rate `115200`
+    2. Copy/clone the `presentation.sh` script from Machinon Github to your Pi home directory and run it to present the Machinon I/O devices to Domoticz. This tells Domoticz the I/O channel names, firmware versions etc. Refresh the Domoticz hardware list and click "Setup" on the Machinon_IO hardware entry to see the names, or view the Devices list.
 
 ## Install NGINX with PHP
 
@@ -169,230 +161,154 @@ The Machinon software support includes a set of PHP web forms to make the I/O co
 See <https://www.raspberrypi.org/documentation/remote-access/web-server/nginx.md> and <https://howtoraspberrypi.com/install-nginx-raspbian-and-accelerate-your-raspberry-web-server/> for NGINX install details.
 
 1. Install NGINX (and php-fpm if required. On Raspian Stretch this will install PHP7.0)
-   ```
+   ```bash
    sudo apt install nginx php-fpm
    ```
 2. For HTTPS access on NGINX, either install your own certificate and specify this in the config file below, OR install the ‘snakeoil’ non-production certificate:
-   ```
-   apt-get install ssl-cert
+   ```bash
+   sudo apt-get install ssl-cert
    ```
 3. Create a new empty NGINX config file:
-   ```
+   ```bash
    cd /etc/nginx/sites-available
    sudo nano nginx-machinon.conf
    ```
 4. Paste in the following content, then save/exit (Ctrl+X):
-```
-\# Machinon Web Config Interface and Proxy Server Configuration
-
-\# Optionally Redirect all HTTP requests to HTTPS (will not work for tunneled requests with different URL path)
-
-\#server {
-
-\#    listen 80;
-
-\#    #listen [::]:80;
-
-\#    server_name localhost;
-
-\#    return 302 https://$host$request_uri;
-
-\#}
-
-\# Default server configuration
-
-server {
-
-    \# Optionally listen on HTTP port 80 (comment out the 80 -> 443 redirect above)
-
-    listen 80 default_server;
-
+    ```
+    # Machinon Web Config Interface and Proxy Server Configuration
     
-
-    \# SSL configuration
-
-    listen 443 ssl default_server;
-
-    \#listen [::]:443 ssl default_server;
-
-    \#
-
-    \# Note: You should disable gzip for SSL traffic.
-
-    \# See: https://bugs.debian.org/773332
-
-    \#
-
-    \# Read up on ssl_ciphers to ensure a secure configuration.
-
-    \# See: https://bugs.debian.org/765782
-
-    \#
-
-    \# Self signed certs generated by the ssl-cert package
-
-    \# Don't use them in a production server!
-
-    \# Replace with your own certs if you have them.
-
-    include snippets/snakeoil.conf;
-
-    root /var/www/html;
-
-    index index.html index.htm index.php;
-
-    \# Custom error 404 page
-
-    error_page 404 /error404.html;
-
-    server_name _;
-
-    server_name_in_redirect off;
-
-    \#absolute_redirect off;    # only in v1.11.8 or later
-
-    \#rewrite_log on;
-
-    location = / {
-
-        \# Redirect requests for "/" to the landing page or Domoticz directory
-
-        try_files $uri /index.html @domo;
-
-    }
-
-    location = /config {
-
-        \# Redirect "config" to the "config/" directory
-
-        rewrite ^ config/ redirect;
-
-    }
-
+    # Optionally Redirect all HTTP requests to HTTPS (will not work for tunneled requests with different URL path)
+    #server {
+    #    listen 80;
+    #    #listen [::]:80;
+    #    server_name localhost;
+    #    return 302 https://$host$request_uri;
+    #}
     
-
-    location = /machinon {
-
-        \# Redirect "machinon" to the directory
-
-        rewrite ^ machinon/ redirect;
-
+    # Default server configuration
+    server {
+        # Optionally listen on HTTP port 80 (comment out the 80 -> 443 redirect above)
+        listen 80 default_server;
+        
+        # SSL configuration
+        listen 443 ssl default_server;
+        #listen [::]:443 ssl default_server;
+        #
+        # Note: You should disable gzip for SSL traffic.
+        # See: https://bugs.debian.org/773332
+        #
+        # Read up on ssl_ciphers to ensure a secure configuration.
+        # See: https://bugs.debian.org/765782
+        #
+        # Self signed certs generated by the ssl-cert package
+        # Don't use them in a production server!
+        # Replace with your own certs if you have them.
+        include snippets/snakeoil.conf;
+    
+        root /var/www/html;
+    
+        index index.html index.htm index.php;
+    
+        # Custom error 404 page
+        error_page 404 /error404.html;
+    
+        server_name _;
+        server_name_in_redirect off;
+        #absolute_redirect off;    # only in v1.11.8 or later
+        #rewrite_log on;
+    
+        location = / {
+            # Redirect requests for "/" to the landing page (if it exists) or machinon directory
+            try_files $uri /index.html @machinon;
+        }
+    
+        location = /config {
+            # Redirect "config" to the "config/" directory
+            rewrite ^ config/ redirect;
+        }
+        
+        location = /machinon {
+            # Redirect "machinon" to the directory
+            rewrite ^ machinon/ redirect;
+        }
+    
+        location / {
+            # Redirect requests for files in "/" to the machinon directory
+            try_files $uri =404;   # try serving file, and fall back to machinon redirect
+        }
+    
+        location @machinon {
+            # redirect to machinon/ directory
+            rewrite ^ machinon/ redirect;
+        }
+    
+        # pass PHP scripts to FastCGI server
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            # With php7 fpm (or other unix sockets):
+            fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+            # With php5 fpm:
+            #fastcgi_pass unix:/var/run/php5-fpm.sock;
+            # With php-cgi (or other tcp sockets):
+            #fastcgi_pass 127.0.0.1:9000;
+        }
+    
+        location = /config/ {
+            # manually redirect to the index page (directory index does not work over tunnel)
+            rewrite ^ index.php redirect;
+            try_files $uri $uri/ =404;
+        }
+    
+        location /machinon/{
+            # Optionally add authentication, unless the host software has login authentication
+            # NB: set Domoticz to use port 4443 for SSL (or port 0 to disable SSL), so that the default 443 can be used by NGINX
+            # Pass requests to Domoticz HTTPS port
+            #proxy_pass https://localhost:4443/;
+            # OR Pass requests to Domoticz HTTP port
+            proxy_pass http://localhost:8080/;
+            #proxy_pass http://127.0.0.1:8080/;
+        }
+    
+        # deny access to .htaccess files, if Apache's document root concurs with nginx's one
+        location ~ /\.ht {
+            deny all;
+        }
+    
+        # deny access to .sh files
+        location ~\.sh$ {
+            deny all;
+            # fake a "not found" response
+            return 404;
+        }
     }
+    ```
 
-    location / {
-
-        \# Redirect requests for files in "/" to the Domoticz directory
-
-        try_files $uri =404;   # try serving file, and fall back to domoticz redirect
-
-    }
-
-    location @domo {
-
-        \# redirect to machinon/ directory
-
-        rewrite ^ machinon/ redirect;
-
-    }
-
-    \# pass PHP scripts to FastCGI server
-
-    location ~ \.php$ {
-
-        include snippets/fastcgi-php.conf;
-
-        \# With php7 fpm (or other unix sockets):
-
-        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-
-        \# With php5 fpm:
-
-        \#fastcgi_pass unix:/var/run/php5-fpm.sock;
-
-        \# With php-cgi (or other tcp sockets):
-
-        \#fastcgi_pass 127.0.0.1:9000;
-
-    }
-
-    location = /config/ {
-
-        \# manually redirect to the index page (directory index does not work over tunnel)
-
-        rewrite ^ index.php redirect;
-
-        try_files $uri $uri/ =404;
-
-    }
-
-    location /machinon/{
-
-        \# Optionally add authentication, unless the host software has login authentication
-
-        \# NB: set Domoticz to use port 4443 for SSL (or port 0 to disable SSL), so that the default 443 can be used by NGINX
-
-        \# Pass requests to Domoticz HTTPS port
-
-        \#proxy_pass https://localhost:4443/;
-
-        \# OR Pass requests to Domoticz HTTP port
-
-        proxy_pass http://localhost:8080/;
-
-        \#proxy_pass http://127.0.0.1:8080/;
-
-    }
-
-    \# deny access to .htaccess files, if Apache's document root concurs with nginx's one
-
-    location ~ /\.ht {
-
-        deny all;
-
-    }
-
-    \# deny access to .sh files
-
-    location ~\.sh$ {
-
-        deny all;
-
-        \# fake a "not found" response
-
-        return 404;
-
-    }
-
-}
-```
-
-1. Disable the default config by deleting the "sites-enabled" symbolic link:
-   ```
+5. Disable the default config by deleting the "sites-enabled" symbolic link:
+   ```bash
    sudo rm /etc/nginx/sites-enabled/default
    ```
-2. Create symbolic link to the config file so that NGINX uses it:
-   ```
+6. Create symbolic link to the new config file so that NGINX uses it:
+   ```bash
    cd /etc/nginx/sites-enabled
    sudo ln -s ../sites-available/nginx-machinon.conf nginx-machinon.conf
    ```
-3. Reload config (or start server):
-   ```
+7. Reload config (or start server):
+   ```bash
    sudo service nginx restart
    ```
    or
-   ```
+   ```bash
    sudo nginx -s reload
    ```
-4. Set user/group permissions to allow NGINX group/user www-data to access the serial port:
-   ```
+8. Set user/group permissions to allow NGINX group/user www-data to access the serial port:
+   ```bash
    sudo usermod -a -G dialout www-data
    sudo usermod -a -G www-data pi
    ```
    (need to reboot for group changes to take effect)
-5. Clone the config forms PHP files and resources to the NGINX web pages directory:
-TO REVISE, ERRORS
-   ```
+9. Clone the config forms PHP files and resources to the NGINX web pages directory:
+   ```bash
    cd /var/www/html
-   sudo git clone https://github.com/EdddieN/machinon_config 
-   sudo mv machinon_config config
+   sudo git clone https://github.com/EdddieN/machinon_config config
+   sudo chown -R www-data:www-data *
    ```

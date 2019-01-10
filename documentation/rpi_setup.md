@@ -16,10 +16,14 @@ The steps below are based on starting with a clean install of the official Raspi
    dtoverlay=sc16is752-spi1,24
    dtoverlay=i2c-rtc,mcp7941x
    dtoverlay=pi3-act-led, gpio=26
-   dtoverlay=pi3-miniuart-bt  #for Pi3 only
-   dtoverlay=pi3-disable-wifi #optional to disable wifi
-   dtoverlay=pi3-disable-bt #to disable bluetooth
-   enable_uart=1  #for Pi3 and Jessie or later
+   # Change BT to mini-uart (Pi3 only)
+   dtoverlay=pi3-miniuart-bt
+   # Optionally disable wifi
+   dtoverlay=pi3-disable-wifi
+   # Optionally disable bluetooth
+   dtoverlay=pi3-disable-bt
+   # Enable UART Pi3 and Jessie or later (can also be done in raspi-config)
+   enable_uart=1
    ```
 
 4. 

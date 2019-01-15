@@ -244,25 +244,12 @@ Put the following config in that file:
 # Default server configuration
 server {
     listen 80 default_server;
-    listen [::]:80 default_server;
     root /opt/machinon/config;
     index index.html index.htm index.php;
-    error_page 404 /error404.html;
     server_name _;
-    server_name_in_redirect off;
-    rewrite ^/config/(.+) /$1 last;
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-    }
-    location = / {
-        rewrite ^ machinon/ redirect;
-    }
-    location /config {
-        rewrite ^ config/index.php redirect;
-    }
-    location /config/ {
-        rewrite ^ index.php redirect;
     }
     location = /machinon {
         rewrite ^ machinon/ redirect;
@@ -332,11 +319,8 @@ Put the next contents on it
 ```
 server {
     listen 81 default_server;
-    listen [::]:81 default_server;
-    root /opt/machinon/client/public;
     index index.php;
     server_name _;
-    server_name_in_redirect off;
     location / {
         try_files $uri $uri/ =404;
     }
@@ -349,9 +333,9 @@ server {
         add_header Front-End-Https on;
         proxy_redirect off;
     }
-    location /config/ {
+    location / {
         auth_request /auth.php;
-        proxy_pass http://127.0.0.1/config/;
+        proxy_pass http://127.0.0.1/;
         proxy_set_header Host $host ;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-Proto $scheme;

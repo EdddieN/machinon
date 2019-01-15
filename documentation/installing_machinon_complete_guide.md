@@ -319,6 +319,7 @@ Put the next contents on it
 ```
 server {
     listen 81 default_server;
+    root /opt/machinon/client/public;
     index index.php;
     server_name _;
     location / {

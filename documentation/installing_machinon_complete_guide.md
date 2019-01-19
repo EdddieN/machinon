@@ -235,16 +235,16 @@ sudo apt-get -y install nginx php-cli php-common php-fpm php-cgi php-pear php-mc
 
 ```
 cd /etc/nginx/sites-available
-sudo nano machinon_config.conf
+sudo nano machinon.conf
 ```
 
-Put the following config in that file:
+Add the following config in that file:
 
 ```
-# Default server configuration
+# Machinon Config server block
 server {
     listen 80 default_server;
-    root /opt/machinon/config;
+    root /opt/machinon/config/public;
     index index.html index.htm index.php;
     server_name _;
     location ~ \.php$ {
@@ -270,11 +270,8 @@ Enable the server block and reload config (or start server):
 ```
 cd /etc/nginx/sites-enabled
 sudo rm -f default
-sudo ln -s ../sites-available/machinon_config.conf machinon_config.conf
-sudo service nginx restart
+sudo ln -s ../sites-available/machinon.conf machinon.conf
 ```
-You can try in your browser http://192.168.1.15
-It should take you directly to the Domoticz screen.
 
 ### Setting serial port permissions for nginx
 
@@ -294,9 +291,19 @@ sudo git clone https://github.com/EdddieN/machinon_config config
 sudo chown pi:pi -R /opt/machinon
 ```
 
-You can access the Machinon's config app going to 
+### Register the Nginx service and restart it.
 
-http://192.168.1.15/config/
+```
+sudo systemctl enable nginx
+sudo service nginx restart
+```
+You can access the Machinon's hardware config app going to 
+http://192.168.1.15/
+
+To open the Domoticz app go to
+http://192.168.1.15/machinon/
+
+Change the IP in these URLS to match your network configuration.
 
 At this point, your Machinon setup is completed for a local network environment.
 
@@ -309,19 +316,23 @@ If you want to access remotely your Machinon devices through our Re:Machinon por
 ## Installing Machinon-Client on your Raspbian
 
 
-### Create server block file
+### Add the Client config to the Nginx's server block
 ```
-sudo nano /etc/nginx/sites-available/machinon_client.conf
+sudo nano /etc/nginx/sites-available/machinon.conf
 ```
 
-Put the next contents on it
+**Append** the next server block after the previous server block configuration (do not replace the code, just add to it)
 
 ```
+# Machinon Client server block
 server {
     listen 81 default_server;
     root /opt/machinon/client/public;
     index index.php;
     server_name _;
+    location / {
+        try_files $uri $uri/ =404;
+    }
     location /machinon/ {
         auth_request /auth.php;
         proxy_pass http://127.0.0.1:8080/;
@@ -358,14 +369,7 @@ server {
 }
 ```
 
-Now enable the Server Block
-
-```
-cd /etc/nginx/sites-enabled
-sudo ln -s ../sites-available/machinon_client.conf machinon_client.conf
-```
-
-### Download the current machinon_client app from GitHub
+### Download machinon_client app from GitHub
 
 As the repository is private, you'll be asked for your GitHub user and password, that's okay.
 
@@ -385,12 +389,9 @@ mv config.example.php config.php
 ```
 
 
-### Start the Nginx Service
-
-Register the Nginx service to run on boot and restart it
+### Restart the Nginx Service
 
 ```
-sudo systemctl enable nginx
 sudo service nginx restart
 ```
  

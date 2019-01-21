@@ -1,4 +1,4 @@
-# Installing Machinon (II) - Re:Machinon remote access guide
+# Installing Machinon (II) - Re:Machinon Access Install Guide
 
 - This guide covers the installation and setup of additional software that will allow you to access your Machinon devices from internet, through our Re:Machinon portal.
 

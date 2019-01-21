@@ -101,26 +101,7 @@ dtoverlay=pi3-disable-wifi
 # Optionally disable bluetooth
 dtoverlay=pi3-disable-bt
 ```
-
-### Setting IP address
-
-At this moment your Machinon should have a DHCP assigned IP address. If you want to continue with dynamic IP assignation, you can skip this step.
-
-However, we recommend setting a fixed IP address in your Machinon, here are the steps to configure it:
-
-```
-sudo nano /etc/dhcpcd.conf
-```
-Uncomment or add these lines, with the proper IP settings.
-As an example we are using a 192.168.1.x network range, you must choose your IP to suit your network settings):
-
-```
-interface eth0
-static ip_address=192.168.1.15/24
-static routers=192.168.1.1
-static domain_name_servers=192.168.1.1
-```
-    
+  
 ### Disable bluetooth service from starting 
 
 This prevents service startup errors:

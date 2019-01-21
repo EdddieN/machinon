@@ -164,7 +164,7 @@ KERNEL=="ttySC0" SYMLINK="serial485"
 
 Reboot and after that check  `ls -l /dev`  command to ensure serial0 and serial1 appear in the results as aliases for the Pi internal ports.
 
-### Raspberry Pi network address
+### Network address setup
 
 We will use DHCP (dynamic) IP assignation as default setting, by default all ISP routers and/or WiFi Hotspots provide DHCP servers.
 This will assign a dynamic IP to the Raspberry Pi.

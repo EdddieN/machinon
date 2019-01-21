@@ -4,7 +4,7 @@
 
 ***You must complete the Machinon main setup before going further on this guide***
 
-[Installing Machinon (I) - Main setup](installing_machinon_complete_guide.md)
+[Installing Machinon (I) - Main setup](machinon_install_guide.md)
 
 ## Installing Machinon-Client on your Raspbian
 

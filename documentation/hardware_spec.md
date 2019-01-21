@@ -3,6 +3,7 @@
 * Enclosure: Standard top-hat DIN-rail mount, 12-module wide (W 213 mm), also wall mountable via screw slots/tabs.
 * I/O on standard 10-way and 12-way 5mm pitch plug-in terminal blocks
 * Status indicator LEDs and LCD on front panel.
+* https://github.com/EdddieN/machinon/blob/master/documentation/machinon_dimmensions.pdf
 ## Power
 * Supply: 10-28 V DC input (typ. 12 V or 24 V)
   * Typical consumption 200-500 mA at 12 V with Raspberry Pi 3B

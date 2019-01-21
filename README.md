@@ -8,4 +8,8 @@ Interface and control documentation for machinon
 * [Hardware Description](documentation/hardware_description.md)
 * [machinon data messages](documentation/data_messages.md)
 * [machinon configuration messages](documentation/config_messages.md)
-* [Raspberry Pi Software Setup](documentation/rpi_setup.md)
+
+## Install guides
+* [Raspberry Pi Software Setup I : Machinon Install Guide](documentation/machinon_install_guide.md)
+* [Raspberry Pi Software Setup II: Re:Machinon Access Install Guide](documentation/remachinon_access_install_guide.md)
+

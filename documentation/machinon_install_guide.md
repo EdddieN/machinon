@@ -79,6 +79,39 @@ sudo apt-get dist-upgrade
 sudo apt-get clean
 ```
 
+### Network address setup
+
+At this step, your Pi probably already has an dynamic IP assigned by DHCP.
+To know this IP run: 
+
+```ip route get 1 | awk '{print $NF;exit}'```
+
+And note down the IP returned, you'll need it to open the web server pages later. 
+
+Through this document we will use 192.168.1.15 as a sample IP address, this address may be different on your device, though.
+
+### == Optional == Setting an static IP address 
+
+Optionally you can set an static IP address.
+Doing this step implies you know your network settings, setting a wrong IP address could leave your Raspberry unaccesable.
+
+```
+sudo nano /etc/dhcpcd.conf
+```
+
+Uncomment or add the following lines, using a proper IP settings.
+As an example we are using a 192.168.1.x network range, but you must choose an IP that suits your network settings:
+
+```
+interface eth0
+static ip_address=192.168.1.15/24
+static routers=192.168.1.1
+static domain_name_servers=192.168.1.1
+```
+
+You can access your Raspberry through SSH now instead of having it attached to a monitor, keyboard, etc...
+
+
 ### Adding system overlays to boot config
 
 ```
@@ -163,37 +196,6 @@ KERNEL=="ttySC0" SYMLINK="serial485"
 ```
 
 Reboot and after that check  `ls -l /dev`  command to ensure serial0 and serial1 appear in the results as aliases for the Pi internal ports.
-
-### Network address setup
-
-We will use DHCP (dynamic) IP assignation as default setting, by default all ISP routers and/or WiFi Hotspots provide DHCP servers.
-This will assign a dynamic IP to the Raspberry Pi.
-
-You can run `sudo ifconfig` to know your IP address.
-`eth0` is the cable network while `wlan0` is the WiFi network.
-
-***On this document, we will use 192.168.1.15 as a sample Raspberry's sample IP address. 
-This address may be different on your device, though.***
-
-Optionally you can setup an static IP, see below.
-
-### == Optional == Setting an static IP address 
-
-Doing this step implies you know your network settings.
-
-```
-sudo nano /etc/dhcpcd.conf
-```
-Uncomment or add these lines, with the proper IP settings.
-As an example we are using a 192.168.1.x network range, you must choose your IP to suit your network settings):
-
-```
-interface eth0
-static ip_address=192.168.1.15/24
-static routers=192.168.1.1
-static domain_name_servers=192.168.1.1
-```
-
 
 ## Install Domoticz
 

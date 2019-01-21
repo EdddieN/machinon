@@ -2,6 +2,9 @@
 
 - This guide covers the installation and setup of additional software that will allow you to access your Machinon devices from internet, through our Re:Machinon portal.
 
+***You must complete the Machinon main setup before going further on this guide***
+[Installing Machinon (I) - Main setup](installing_machinon_complete_guide.md)
+
 ## Installing Machinon-Client on your Raspbian
 
 ### Add the Client config to the Nginx's server block

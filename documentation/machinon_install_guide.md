@@ -1,3 +1,4 @@
+
 # Installing Machinon (I) - Main setup
 
 - This guide covers the main Machinon setup, which is mandatory and provides all the functionality to use your Machinon in a local network environment.
@@ -88,7 +89,7 @@ To know this IP run:
 
 And note down the IP returned, you'll need it to open the web server pages later. 
 
-Through this document we will use 192.168.1.15 as a sample IP address, this address may be different on your device, though.
+*Through this document we will use 192.168.1.15 as a sample IP address, this address may be different on your device, though.*
 
 ### == OPTIONAL == Setting an static IP address 
 
@@ -109,8 +110,14 @@ static routers=192.168.1.1
 static domain_name_servers=192.168.1.1
 ```
 
-You can access your Raspberry through SSH now instead of having it attached to a monitor, keyboard, etc...
+Reboot to apply the network changes
+```
+sudo reboot
+```
 
+#### Accessing your Raspberry through SSH
+
+You can access your Raspberry through SSH instead of having it attached to a monitor, keyboard, etc...
 
 ### Adding system overlays to boot config
 

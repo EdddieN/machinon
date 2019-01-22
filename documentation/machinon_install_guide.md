@@ -229,7 +229,7 @@ cd /opt/domoticz
 
 If you are using DHCP IP assignment, this will help you quickly know the current IP of your Machinon.
 
-```sudo nano /opt/domoticz/script/get-ip.sh```
+```sudo nano /opt/domoticz/scripts/get-ip.sh```
 
 Put the following code on the file, save and exit
 
@@ -241,7 +241,7 @@ Put the following code on the file, save and exit
 #     https://stackoverflow.com/a/25851186
 
 # Usage: get-ip.sh
- 
+
 # get local IP address of default route interface
 # the awk command splits off and prints the contents of the last field in the "ip" command output, i.e. the IP address
 my_ip=$(ip route get 1 | awk '{print $NF;exit}')
@@ -256,7 +256,7 @@ if [ -z $my_ip ] ; then
     #my_ip=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
     # or another from https://unix.stackexchange.com/questions/8518/how-to-get-my-own-ip-address-and-save-it-to-a-variable-in-a-shell-script
     #my_ip=$(ip -o addr show up primary scope global | while read -r num dev fam addr rest; do echo ${addr%/*}; done)
-  
+
     ip_type=" S"
     if [ -z $my_ip ] ; then
         # got empty result from last test

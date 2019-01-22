@@ -204,6 +204,15 @@ KERNEL=="ttySC0" SYMLINK="serial485"
 
 Reboot and after that check  `ls -l /dev`  command to ensure serial0 and serial1 appear in the results as aliases for the Pi internal ports.
 
+## Create Machinon's main folder
+
+This folder will contain all our applications related to Machinon
+
+```
+sudo mkdir -p /opt/machinon/scripts
+sudo chown pi:pi -R /opt/machinon
+```
+
 ## Install Domoticz
 
 `curl -L install.domoticz.com | sudo bash`
@@ -225,72 +234,36 @@ cd /opt/domoticz
 ./domoticz
 ```
 
-### ==OPTIONAL== : Showing your IP on the Machinon LCD screen
+### ==OPTIONAL== : Showing your IP in the Machinon's LCD screen
 
-If you are using DHCP IP assignment, this will help you quickly know the current IP of your Machinon.
-
-```sudo nano /opt/domoticz/scripts/get-ip.sh```
-
-Put the following code on the file, save and exit
+This will help you quickly know the current IP on your Machinon.
 
 ```
-#!/bin/bash
- 
-# Print the local IP address associated with the default route (i.e. the main network interface IP)
-# See https://stackoverflow.com/questions/13322485/how-to-get-the-primary-ip-address-of-the-local-machine-on-linux-and-os-x
-#     https://stackoverflow.com/a/25851186
-
-# Usage: get-ip.sh
-
-# get local IP address of default route interface
-# the awk command splits off and prints the contents of the last field in the "ip" command output, i.e. the IP address
-my_ip=$(ip route get 1 | awk '{print $NF;exit}')
-ip_type=" D"
-
-# if that didn't work, get the current IP of the eth0 interface
-if [ -z $my_ip ] ; then
-    # got empty result from last test
-    #echo "No IP for default route"
-    my_ip=$(hostname -I)
-    # another option from https://unix.stackexchange.com/questions/8518/how-to-get-my-own-ip-address-and-save-it-to-a-variable-in-a-shell-script
-    #my_ip=$(ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
-    # or another from https://unix.stackexchange.com/questions/8518/how-to-get-my-own-ip-address-and-save-it-to-a-variable-in-a-shell-script
-    #my_ip=$(ip -o addr show up primary scope global | while read -r num dev fam addr rest; do echo ${addr%/*}; done)
-
-    ip_type=" S"
-    if [ -z $my_ip ] ; then
-        # got empty result from last test
-        #echo "No IP for default adapter"
-        my_ip="unknown"
-        ip_type=""
-    fi
-fi
-
-echo ${my_ip}
-
-#end
+sudo nano /opt/machinon/scripts/get-ip.sh
 ```
 
-Then run 
+Copy/clone the file `get-ip.sh` script from Machinon Github on the  the following code on the file.
+Save, exit and apply permissions.
 
 ```
-sudo chown pi:pi /opt/domoticz/script/get-ip.sh
-sudo chmod 755 /opt/domoticz/script/get-ip.sh
+sudo chown pi:pi /opt/machinon/scripts/get-ip.sh
+sudo chmod 755 /opt/machinon/scripts/get-ip.sh
 ```
 
-After that you'll have to add a dzVents script on Domoticz.
+After that you'll have to add a dzVents script on Domoticz (we will continue this procedure later...)
 
-### Add Hardware on Domoticz (optional)
+### ==OPTIONAL== : Add Hardware on Domoticz
 
 Open a browser and access http://192.168.1.15:8080/
-***Change the IP in these URLS to match your network configuration.***
+
+***Change the IP in this URLS to match your network configuration.***
 
 The Domoticz screen should appear.
 
 1.  Add a new "MySensors USB Gateway" hardware under "Hardware" menu
     1.  Name the hardware "Machinon_IO" or similar
     2.  Select Serial port  `serial0`  and baut rate  `115200`
-2.  Copy/clone the  `presentation.sh`  script from Machinon Github to your Pi home directory and run it to present the Machinon I/O devices to Domoticz. This tells Domoticz the I/O channel names, firmware versions etc. Refresh the Domoticz hardware list and click "Setup" on the Machinon_IO hardware entry to see the names, or view the Devices list.
+2.  Copy/clone the  `presentation.sh` script from Machinon Github to `/opt/machinon/scripts` and run it to present the Machinon I/O devices to Domoticz. This tells Domoticz the I/O channel names, firmware versions etc. Refresh the Domoticz hardware list and click "Setup" on the Machinon_IO hardware entry to see the names, or view the Devices list.
 
 ## Install Nginx + PHP
 
@@ -357,10 +330,9 @@ sudo usermod -a -G www-data pi
 ### Download  machinon_config
 
 ```
-sudo mkdir -p /opt/machinon
 cd /opt/machinon
 sudo git clone https://github.com/EdddieN/machinon_config config
-sudo chown pi:pi -R /opt/machinon
+sudo chown pi:pi -R config
 ```
 
 ### Register the Nginx service and restart it.

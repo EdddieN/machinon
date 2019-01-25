@@ -70,3 +70,10 @@ The status LEDs include:
 * Raspberry Pi additional LED (green) connected to GPIO13 (pin 33), available for user application.
 
 The LCD is a dot-matrix type arranged as 7 lines of 21 characters. At powerup/reset, the Machinon displays firmware version and serial number info. User-specified text strings can be written on each line using MySensors commands.
+
+## Wiring
+
+Power and I/O wiring is via standard 5 mm pitch plug-in terminal blocks.
+
+Example wiring for typical meters, switches, CTs, relays etc. is shown in the [sample wiring diagram](Machinon_Example_Wiring_rev2.pdf).
+

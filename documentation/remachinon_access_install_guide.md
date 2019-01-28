@@ -22,9 +22,6 @@ server {
     root /opt/machinon/client/public;
     index index.php;
     server_name _;
-    location / {
-        try_files $uri $uri/ =404;
-    }
     location /machinon/ {
         auth_request /auth.php;
         proxy_pass http://127.0.0.1:8080/;

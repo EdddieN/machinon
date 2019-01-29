@@ -155,31 +155,31 @@ Put on it the following contents, save and exit:
 > Jose : In the MQTT_SERVER_PASSWORD line you must write the password I sent by email
 
 ```
-# MQTT Broker definitions  
-MQTT_SERVER_HOST=re.machinon.com  
-MQTT_SERVER_PORT=1883  
-MQTT_SERVER_PORT_SSL=8883  
-MQTT_SERVER_USE_SSL=True  
-MQTT_SERVER_USERNAME=remachinon  
-MQTT_SERVER_PASSWORD=password  
-MQTT_CERTS_PATH=/etc/ssl/certs  
-  
-# MQTT client and topic definitions  
-MQTT_CLIENT_ID_PREFIX=agent_machinon:  
-MQTT_TOPIC_PREFIX_REMOTECONNECT=remote  
-  
-# SSH Tunnel details  
-SSH_HOSTNAME=re.machinon.com  
-SSH_USERNAME=remachinon
-SSH_KEY_FILE=/etc/ssh/remachinon_rsa_key.pem  
-  
-# Remachinon API base URL  
-REMACHINON_API_URL=https://${SSH_HOSTNAME}/api/v1  
+# MQTT Broker definitions
+MQTT_SERVER_HOST=re.machinon.com
+MQTT_SERVER_PORT=1883
+MQTT_SERVER_PORT_SSL=8883
+MQTT_SERVER_USE_SSL=True
+MQTT_SERVER_USERNAME=remachinon
+MQTT_SERVER_PASSWORD=password
+MQTT_CERTS_PATH=/etc/ssl/certs
 
-# Nginx port listening machinon_client web app (default 81)  
+# MQTT client and topic definitions
+MQTT_CLIENT_ID_PREFIX=agent_machinon:
+MQTT_TOPIC_PREFIX_REMOTECONNECT=remote
+
+# SSH Tunnel details
+SSH_HOSTNAME=re.machinon.com
+SSH_USERNAME=remachinon
+SSH_KEY_FILE=/etc/ssh/remachinon_rsa_key.pem
+
+# Remachinon API base URL
+REMACHINON_API_URL=https://${SSH_HOSTNAME}/api/v1
+
+# Nginx port listening machinon_client web app (default 81)
 MACHINON_CLIENT_PORT=81
 
-# script user must have write access to this file or folder  
+# script user must have write access to this file or folder
 LOG_FILE=tunnel-agent.log
 ```
 
@@ -192,18 +192,18 @@ sudo nano /etc/systemd/system/agent_machinon.service
 Write in the service file que following code, save and exit
 
 ```
-# Service for Logic Energy Re:Machinon Tunnel Agent  
-[Unit]  
-       Description=agent_machinon_service  
-[Service]  
-       User=pi  
-       Group=users  
+# Service for Logic Energy Re:Machinon Tunnel Agent
+[Unit]
+       Description=agent_machinon_service
+[Service]
+       User=pi
+       Group=users
        ExecStart=/usr/bin/python3 /opt/machinon/agent/tunnel-agent.py
        WorkingDirectory=/opt/machinon/agent/
-       Restart=always  
-       RestartSec=20  
-       #StandardOutput=null  
-[Install]  
+       Restart=always
+       RestartSec=20
+       #StandardOutput=null
+[Install]
        WantedBy=multi-user.target
 ```
 

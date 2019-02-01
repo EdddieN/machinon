@@ -131,9 +131,12 @@ Add the following lines.
 ```
 # Enable UART Pi3 and Jessie or later
 enable_uart=1
+# Enable SC16IS75x SPI-UART expander
 dtoverlay=sc16is752-spi1,24
+# Enable Machinon RTC
 dtoverlay=i2c-rtc,mcp7941x
-dtoverlay=pi3-act-led, gpio=26
+# Redirect SD/Activity LED to Machinon front panel
+dtoverlay=pi3-act-led,gpio=26
 # Change BT to mini-uart (Pi3 only)
 dtoverlay=pi3-miniuart-bt
 # Optionally disable wifi

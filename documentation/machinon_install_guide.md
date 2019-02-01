@@ -18,12 +18,12 @@ https://www.raspberrypi.org/downloads/noobs/
 5. A very easy installation wizard will appear, choose to install Raspbian Lite and follow instructions. You may need to configure your WiFi if not using cabled networking with DHCP. 
 6. The installation takes some minutes depending of your network connection.
 
-#### Using Raspbian image
-
-1. Download the Raspbian Stretch Lite OS .zip image from the Raspbian site.
-2. "Burn" the image into SD card using one of the various tools available on internet. For OSX I used `balenaEtcher`, which can load  .iso, .img and even .zip images into cards.
-3. Eject SD card safely, put it into Raspberry, attach keyboard, network cable, monitor, etc... and power it on.
-
+#### Using Raspbian Image
+This method is preferred for headless installs (no keyboard or screen) with the Pi mounted in a Machinon unit.
+1. Download the Raspbian Stretch Lite OS .zip image from the Raspbian site: https://www.raspberrypi.org/downloads/raspbian/
+2. "Burn" the image onto a microSD card (min 4 GB size) using one of the various tools available. For OSX and Windows you can use `balenaEtcher` (reads .iso, .img and .zip images). On Windows, you can use `Win32DiskImager` (.img only), Rufus (.img and .zip) and others.
+3. After the image is written, open the card's `boot` partition and create an empty file named `ssh` (no file extension). This will enable SSH access to the Pi.
+4. Eject SD card safely, put it into Raspberry Pi (either bare Pi or mounted in a Machinon unit), attach network cable and power it up. You can then find the Pi's IP address and log in using any SSH client.
 
 ### Post installation setup:
 
@@ -53,13 +53,13 @@ sudo raspi-config
 * Locales
 	* Usually choosing EN_GB@UTC-8 is fine. Raspbian detects your location so, if you use another locale, install it to avoid Raspbian dropping Locale error messages. 
 * WiFi Country
-	* Set your country here in case you'll use WiFi. 
+	* Set your country here if you want to use WiFi. 
 5. Interfacing options (based on Matthew's instructions)
 * Enable SPI
 *  Enable I2C
 *  Enable Serial 
 	* Do NOT enable login shell over serial.
-* Enable remote command line through SSH. 
+* Enable remote command line through SSH (if not already done via the `ssh` file in the `boot` partition). 
 	* Not required but it allows to do the rest of the setup through SSH, so you can detach the Raspberry from monitor/keyboard/etc...
 6. Advanced options :
 *  Expand filesystem to fill card. 
@@ -67,11 +67,11 @@ sudo raspi-config
 	* Latest Raspbian image also performs this procedure during the first boot.
 *  Change GPU memory to 16 MB
 
-The program will ask you to reboot, select "Yes"
+The program will ask you to reboot. Select "Yes"
 
-### Updating the SO
+### Updating the OS
 
-Once you login again in the Pi, update the operative system. Answer yes (Y) if the commands ask for confirmation.
+Log in to the Pi again, and update the operating system. Answer yes (Y) if the commands ask for confirmation.
 
 ```
 sudo apt-get update
@@ -82,25 +82,25 @@ sudo apt-get clean
 
 ### Network address setup
 
-At this step, your Pi probably already has an dynamic IP assigned by DHCP.
-To know this IP run: 
+At this stage, your Pi probably already has a dynamic IP assigned by DHCP.
+To find this IP run:
 
 ```ip route get 1 | awk '{print $NF;exit}'```
 
-And note down the IP returned, you'll need it to open the web server pages later. 
+And note down the IP address. You'll need it to open the web server pages later.
 
-*Through this document we will use 192.168.1.15 as a sample IP address, this address may be different on your device, though.*
+*Through this document we will use 192.168.1.15 as a sample IP address. The actual address may be different on your device, though.*
 
-### == OPTIONAL == Setting an static IP address 
+### == OPTIONAL == Setting a static IP address 
 
 Optionally you can set an static IP address.
-Doing this step implies you know your network settings, setting a wrong IP address could leave your Raspberry unaccesable.
+Doing this step implies you know your network settings. Assigning a wrong IP address could leave your Raspberry inaccessable!
 
 ```
 sudo nano /etc/dhcpcd.conf
 ```
 
-Uncomment or add the following lines, using a proper IP settings.
+Uncomment or add the following lines, using suitable IP settings for your network.
 As an example we are using a 192.168.1.x network range, but you must choose an IP that suits your network settings:
 
 ```
@@ -117,7 +117,7 @@ sudo reboot
 
 #### Accessing your Raspberry through SSH
 
-You can access your Raspberry through SSH instead of having it attached to a monitor, keyboard, etc...
+You can access your Raspberry through SSH instead of having it attached to a monitor, keyboard, etc. This is the normal method of accessing the Pi when it is mounted into a Machinon system.
 
 ### Adding system overlays to boot config
 
@@ -158,7 +158,7 @@ sudo systemctl disable hciuart
 ```
 sudo nano /boot/cmdline.txt
 ``` 
-If appears, remove the following text `console=serial0,115200` 
+Remove the text `console=serial0,115200` if it appears in the command line.
 See [https://www.raspberrypi.org/documentation/configuration/uart.md](https://www.raspberrypi.org/documentation/configuration/uart.md) for more info.
 
 ### Adding modules
@@ -167,7 +167,7 @@ See [https://www.raspberrypi.org/documentation/configuration/uart.md](https://ww
 sudo nano /etc/modules
 ``` 
  
- Add a new line with  `rtc-mcp7941x`
+Add a new line with  `rtc-mcp7941x` then save and exit.
 
 ### Setting hardware clock
 
@@ -190,13 +190,13 @@ sudo reboot
 
 Check that the Pi has correct time from network with `date` (keep in mind we are using UTC time zone). 
 
-Optionally manually set HW clock with  `sudo hwclock -w`  to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot. This can can be forced manually with  `sudo hwclock -r`  to set the system clock from the HW clock. 
+Optionally manually set HW clock with  `sudo hwclock -w`  to write system time to HW clock. The Pi will automatically load the time/date from the HW clock at boot, and update the HW clock from NTP when it is available. You can also use `sudo hwclock -s`  to manually set the system clock from the HW clock.
 
-The Pi does an NTP update of system clock at boot, and then every 1024 secs (17 mins) thereafter, and sets the RTC from this.
+The Pi does an NTP update of system clock at boot, and periodically thereafter, and sets the RTC from this.
 
 ### Aliasing serial ports nodes
 
-Add permanent aliases for the SPI UARTs (Domoticz does not show port names like "ttySC1", so here we create aliases to "serial2" for RS485 and "serial3" for machinon config).
+Add a permanent alias for the RS485 SPI UART (Domoticz does not show port names like "ttySC0", so here we create an alias to "serial485" for the RS485 port).
 ```
 sudo nano /etc/udev/rules.d/98-minibms.rules
 ```
@@ -205,7 +205,7 @@ Put the following content on the file
 KERNEL=="ttySC0" SYMLINK="serial485"
 ```
 
-Reboot and after that check  `ls -l /dev`  command to ensure serial0 and serial1 appear in the results as aliases for the Pi internal ports.
+Reboot and after that check  `ls -l /dev`  command to ensure serial485 appears in the results as an alias for the ttySC0 port.
 
 ## Create Machinon's main folder
 
@@ -257,7 +257,7 @@ After that you'll have to add a dzVents script on Domoticz (we will continue thi
 
 ### ==OPTIONAL== : Add Hardware on Domoticz
 
-Open a browser and access http://192.168.1.15:8080/
+Open a browser and access `http://192.168.1.15:8080/`
 
 ***Change the IP in this URLS to match your network configuration.***
 
@@ -265,8 +265,8 @@ The Domoticz screen should appear.
 
 1.  Add a new "MySensors USB Gateway" hardware under "Hardware" menu
     1.  Name the hardware "Machinon_IO" or similar
-    2.  Select Serial port  `serial0`  and baut rate  `115200`
-2.  Copy/clone the  `presentation.sh` script from Machinon Github to `/opt/machinon/scripts` and run it to present the Machinon I/O devices to Domoticz. This tells Domoticz the I/O channel names, firmware versions etc. Refresh the Domoticz hardware list and click "Setup" on the Machinon_IO hardware entry to see the names, or view the Devices list.
+    2.  Select Serial port `serial0` and baud rate  `115200`
+2.  Copy/clone the `presentation.sh` script from Machinon Github to `/opt/machinon/scripts` and run it to present the Machinon I/O devices to Domoticz. This tells Domoticz the I/O channel names, firmware versions etc. Refresh the Domoticz hardware list and click "Setup" on the Machinon_IO hardware entry to see the names, or view the Devices list.
 
 ## Install Nginx + PHP
 
@@ -344,11 +344,9 @@ sudo chown pi:pi -R config
 sudo systemctl enable nginx
 sudo service nginx restart
 ```
-You can access the Machinon's hardware config app going to 
-http://192.168.1.15/
+You can now access the Machinon's hardware config app by browsing to `http://192.168.1.15/`
 
-To open the Domoticz app go to
-http://192.168.1.15/machinon/
+To open the Domoticz app directly, go to `http://192.168.1.15/machinon/`
 
 ***Change the IP in these URLS to match your network configuration.***
 

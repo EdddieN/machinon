@@ -295,15 +295,18 @@ server {
     root /opt/machinon/config/public;
     index index.html index.htm index.php;
     server_name _;
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-    }
     location = /machinon {
         rewrite ^ machinon/ redirect;
     }
     location /machinon/{
         proxy_pass http://localhost:8080/;
+    }
+    location = /machinon/backupdatabase.php {
+        proxy_pass http://localhost:8080/backupdatabase.php;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
     }
     location ~ /\.ht {
         deny all;

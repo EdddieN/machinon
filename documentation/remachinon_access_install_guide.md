@@ -40,10 +40,18 @@ server {
         add_header Front-End-Https on;
         proxy_redirect off;
     }
+    location = /machinon/backupdatabase.php {
+        auth_request /auth.php;
+        proxy_pass http://127.0.0.1:8080/backupdatabase.php;
+        proxy_set_header Host $host ;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        add_header Front-End-Https on;
+        proxy_redirect off;
+    }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
-        fastcgi_read_timeout 600;
     }
     location ~ /\.ht {
         deny all;

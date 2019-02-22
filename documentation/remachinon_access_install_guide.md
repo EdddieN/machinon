@@ -1,10 +1,36 @@
 # Installing Machinon (II) - Re:Machinon Access Install Guide
 
-- This guide covers the installation and setup of additional software that will allow you to access your Machinon devices from internet, through our Re:Machinon portal.
+This guide covers the installation and setup of additional software that will allow you to access your Machinon devices from internet, through our Re:Machinon portal.
+
+This guide covers up to the following software versions:
+- machinon_client [v0.1-beta](https://github.com/EdddieN/machinon_client/releases/tag/v0.1-beta)
+- agent_machinon [v0.3.1-beta](https://github.com/EdddieN/agent_machinon/releases/tag/v0.3.1-beta)
 
 ***You must complete the Machinon main setup before going further on this guide***
 
 [Installing Machinon (I) - Main setup](machinon_install_guide.md)
+
+#### CHANGELOG
+v2.0 Major changes on Agent Machinon setup. 
+
+- A Re:Machinon account is required **before** starting this installation.
+- The Server PEM key manual installation is not required anymore.
+- Neither getting the MQTT server credentials.
+- The agent_machinon .env file has been reduced to two parameters, which are your Re:Machinon credentials.
+
+v1.0 First release of the document
+
+## Re:Machinon portal account
+
+First you need a Re:Machinon portal account. 
+
+***At this moment the new user registrations are closed. 
+However you can contact us to apply for a beta-testing Re:Machinon account.***
+
+Visit Re:Machinon portal and register.
+http://re.machinon.com
+
+Once you got your account credentials, go back to your Raspberry Pi and follow the following steps.
 
 ## Installing Machinon-Client on your Raspbian
 
@@ -111,6 +137,8 @@ This app is required to open the SSH tunnels and keep them opened without timeou
 sudo apt-get -y install autossh
 ```
 
+*This SSH connection method will be changed in short for a python scripted SSH connection method. However, in the meantime, the agent will continue using `autossh`*
+
 ### Download the current agent_machinon app from GitHub
 
 As the repository is private, you'll be asked for your GitHub user and password, that's okay.
@@ -122,74 +150,38 @@ sudo chown pi:pi -R agent
 cd agent
 ```
 
-### Installing SSH Re:Machinon server  key and signature
-
-The Re:Machinon's server PEM key is needed to let the app open the link with it.
-
-> Jose :  This PEM key will be downloaded / installed internally or generated in the Pi and installed on the server somehow when automating the installation.
-> At the moment I'll send the key to you by email. 
-
-### Copy the contents of the key I've sent you in this file and set the  right permissions
-
-> Jose : Use the PEM file I sent by email.
-
-```
-sudo nano /etc/ssh/remachinon_rsa_key.pem 
-sudo chmod 400 /etc/ssh/remachinon_rsa_key.pem
-```
-
 ### Preload the Re:Machinon server signature
 
 This commands pre-install the Re:Machinon's server key signature, to avoid the ssh client asks for confirmation the first time the tunnel is opened (which would hang the agent).
 
 If the agent app doesn't connect correctly, please try to run this commands again.
 
+*Note: In case the first command returns a "No such file or directory error" that's okay, means the global known_host file doesn't exist yet.*
+
 ```
 sudo ssh-keygen -R re.machinon.com 
 ssh-keyscan re.machinon.com | sudo tee -a /etc/ssh/ssh_known_hosts
 ```
 
-*Note: In case the first command returns a "No such file or directory error" that's okay, means the global known_host file doesn't exist yet.*
-
 ## Setup agent_machinon
 
 The app provides a sample .env.example file as template. You can copy and modify the values as shown below or you can simply create a new .env file configured to use the re.machinon.com site.
 
+Since agent_machinon v0.3.0 the .env file has been reduced to two directives, which are your re.machinon.com credentials. The MQTT and Server PEM key installation will be processed through the portal automatically.
+
 ```
+cp .env.example .env
 sudo nano .env
 ```
-Put on it the following contents, save and exit:
-
-> Jose : In the MQTT_SERVER_PASSWORD line you must write the password I sent by email
-
+Fill in the two directives with your user credentials, save and exit
 ```
-# MQTT Broker definitions
-MQTT_SERVER_HOST=re.machinon.com
-MQTT_SERVER_PORT=1883
-MQTT_SERVER_PORT_SSL=8883
-MQTT_SERVER_USE_SSL=True
-MQTT_SERVER_USERNAME=remachinon
-MQTT_SERVER_PASSWORD=password
-MQTT_CERTS_PATH=/etc/ssl/certs
-
-# MQTT client and topic definitions
-MQTT_CLIENT_ID_PREFIX=agent_machinon:
-MQTT_TOPIC_PREFIX_REMOTECONNECT=remote
-
-# SSH Tunnel details
-SSH_HOSTNAME=re.machinon.com
-SSH_USERNAME=remachinon
-SSH_KEY_FILE=/etc/ssh/remachinon_rsa_key.pem
-
-# Remachinon API base URL
-REMACHINON_API_URL=https://${SSH_HOSTNAME}/api/v1
-
-# Nginx port listening machinon_client web app (default 81)
-MACHINON_CLIENT_PORT=81
-
-# script user must have write access to this file or folder
-LOG_FILE=tunnel-agent.log
+# Re:Machinon Service credentials  
+REMACHINON_EMAIL=user@example.com  
+REMACHINON_PASSWORD=yourpassword
 ```
+
+*The old directives are still valid but they're not required anymore if you're using re.machinon.com service. 
+These directives will be properly documented after we release Re:Machinon code, to let you setup the agent_machinon accordingly.*
 
 ### Installing agent_machinon as service
 
@@ -229,32 +221,32 @@ Let's identify your Raspberry MUID (the ethernet MAC address in use), which you'
 
 ```
 cd /opt/machinon/agent
-cat tunnel-agent.log | grep "remote"
+python3 tunnel-agent.py -m
 ```
-If the agent is running correctly, you'll get a message like this
+The command will return something like this
 ```
-MQTT Subscribed to 'remote/B827EB8B4A89' QOS=(0,)
+MUID : 1234ABCD4568
 ```
-Copy the hexadecimal value **after** `remote/` , that's the device's MUID!
+Copy the hexadecimal value, that's your device's MUID.
 
-If the tunnel-agent.log does not exist please re-check all the previous steps, as something's not working.
 
 ### Debugging possible errors
 
-In case something goes wrong, you can always run agent_machinon directly from command line:
-
+In case something goes wrong, we recommend to stop the service...
+```
+sudo service agent_machinon stop
+```
+...and run agent_machinon directly from command line:
 ```
 cd /opt/machinon/agent
 env python3 tunnel-agent.py
 ```
-
 If the app is running properly you'll see the app connects to MQTT server and waits for incoming commands. Otherwise it will drop some Python errors.
 
 ### Monitoring Agent-Machinon
 
 You can also check Agent Machinon while the service is running by watching the log file. 
 This command will continuously show the log contents until Ctrl+C is pressed:
-
 ```
 cd /opt/machinon/agent
 tail -f tunnel-agent.log
@@ -262,6 +254,6 @@ tail -f tunnel-agent.log
 
 ## Now what?
 
-Visit Re:Machinon portal, join up, register your device using the MUID and you're ready to go!
+Visit Re:Machinon portal, log in, register your device using the MUID and you're ready to go!
 
 http://re.machinon.com

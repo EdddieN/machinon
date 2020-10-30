@@ -324,6 +324,13 @@ sudo rm -f default
 sudo ln -s ../sites-available/machinon.conf machinon.conf
 ```
 
+If using ‘Buster’ then php is updated from 7.0 to 7.3, so the following line in machinon.conf;
+
+        fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+Must be changed into;
+
+        fastcgi_pass unix:/var/run/php/php7.3-fpm.sock;
+
 ### Setting serial port permissions for nginx
 
 Set user/group permissions to allow NGINX group/user www-data to access the serial port:
